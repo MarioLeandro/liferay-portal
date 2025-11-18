@@ -30,6 +30,18 @@ export enum TabName {
 }
 
 export class ClaySamplePage extends POM {
+	readonly alertStatic: (variant: string) => Locator;
+	readonly alerStaticIcon: (variant: string, icon: string) => Locator;
+	readonly alertStaticBold: (variant: string, boldText: string) => Locator;
+	readonly alertSuccessSubmit: {
+		closeButton: Locator;
+		locator: Locator;
+		trigger: Locator;
+	};
+	readonly alertDisappearsAfterFiveSeconds: {
+		locator: Locator;
+		trigger: Locator;
+	};
 	readonly managementToolbarActiveState: Locator;
 	readonly managementToolbarDefaultState: Locator;
 	readonly managementToolbarUsingDisplayContext: Locator;
@@ -39,6 +51,37 @@ export class ClaySamplePage extends POM {
 
 	constructor(page: Page, url: string) {
 		super(page, url);
+
+		this.alertStatic = (variant) => page.locator(`.alert.alert-${variant}`);
+
+		this.alerStaticIcon = (variant, icon) =>
+			page
+				.locator(`.alert.alert-${variant}`)
+				.locator(`.lexicon-icon.lexicon-icon-${icon}`);
+
+		this.alertStaticBold = (variant, boldText) =>
+			page
+				.locator(`.alert.alert-${variant}`)
+				.locator('.lead')
+				.getByText(boldText);
+
+		this.alertSuccessSubmit = {
+			closeButton: page
+				.locator('.alert-notifications')
+				.locator('.alert.alert-success')
+				.locator('.close'),
+			locator: page.getByText(
+				'Success:Your request completed successfully.'
+			),
+			trigger: page.getByText('Success Submit'),
+		};
+
+		this.alertDisappearsAfterFiveSeconds = {
+			locator: page.getByText(
+				'Info:Your request completed successfully.'
+			),
+			trigger: page.getByText('Disappears After 5 Seconds'),
+		};
 
 		this.managementToolbarActiveState = page.locator(
 			'#managementToolbarActiveState'
