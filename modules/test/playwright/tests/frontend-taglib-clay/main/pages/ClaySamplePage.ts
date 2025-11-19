@@ -35,7 +35,7 @@ interface AlertLocatorsBase {
 	locator: Locator;
 }
 
-interface StripeAlertLocators extends AlertLocatorsBase {
+export interface StripeAlertLocators extends AlertLocatorsBase {
 	close: Locator;
 }
 
