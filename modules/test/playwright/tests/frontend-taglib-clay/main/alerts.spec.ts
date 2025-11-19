@@ -54,9 +54,13 @@ test('Verify alert contains all required attributes: icon, type text, and descri
 test('Verify the keyword is semi-bold when alert contains status icon and keyword.', async ({
 	claySamplePage,
 }) => {
-	await expect(claySamplePage.alertStatic('success').first()).toHaveCSS(
+	const successAlert = claySamplePage.alertStatic('success').first();
+
+	await expect(successAlert).toHaveCSS('font-weight', '400');
+
+	await expect(successAlert.locator('.lead')).toHaveCSS(
 		'font-weight',
-		'400'
+		'600' // Semi-bold
 	);
 });
 
