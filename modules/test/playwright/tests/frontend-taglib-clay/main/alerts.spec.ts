@@ -24,13 +24,13 @@ test.beforeEach('Select alerts tab', async ({claySamplePage}) => {
 test('Verify alert contains all required attributes: icon, type text, and description.', async ({
 	claySamplePage,
 }) => {
-	await test.step('Check if the alert is present', async () => {
+	await test.step('Check if alert-success is present', async () => {
 		await expect(
 			claySamplePage.alertStatic('success').first()
 		).toBeAttached();
 	});
 
-	await test.step('Check if the alert displays status icon', async () => {
+	await test.step('Check if alert-success displays the correct indicator icon', async () => {
 		await expect(
 			claySamplePage
 				.alerStaticIcon('success', 'check-circle-full')
@@ -38,13 +38,13 @@ test('Verify alert contains all required attributes: icon, type text, and descri
 		).toBeVisible();
 	});
 
-	await test.step('Check if the alert displays type text', async () => {
+	await test.step('Check if alert-success displays the correct lead text', async () => {
 		await expect(
 			claySamplePage.alertStaticBold('success', 'Success').first()
 		).toBeVisible();
 	});
 
-	await test.step('Check if the alert displays description text', async () => {
+	await test.step('Check if the alert-success displays description text', async () => {
 		await expect(claySamplePage.alertStatic('success').first()).toHaveText(
 			'Success:This is a success message.'
 		);
