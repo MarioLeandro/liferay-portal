@@ -29,10 +29,22 @@ export enum TabName {
 	VERTICAL_NAV = 'Vertical Nav',
 }
 
+interface AlertLocatorsBase {
+	icon: (icon: string) => Locator;
+	lead: (leadText: string) => Locator;
+	locator: Locator;
+}
+
+interface StripeAlertLocators extends AlertLocatorsBase {
+	close: Locator;
+}
+
 export class ClaySamplePage extends POM {
-	readonly alertStatic: (variant: string) => Locator;
-	readonly alerStaticIcon: (variant: string, icon: string) => Locator;
-	readonly alertStaticBold: (variant: string, boldText: string) => Locator;
+	readonly alert: (
+		type: 'embedded' | 'stripe',
+		variant: string
+	) => AlertLocatorsBase | StripeAlertLocators;
+
 	readonly alertSuccessSubmit: {
 		closeButton: Locator;
 		locator: Locator;
@@ -52,18 +64,33 @@ export class ClaySamplePage extends POM {
 	constructor(page: Page, url: string) {
 		super(page, url);
 
-		this.alertStatic = (variant) => page.locator(`.alert.alert-${variant}`);
+		this.alert = (type: 'embedded' | 'stripe', variant: string) => {
+			const fluidClass = type === 'stripe' ? '.alert-fluid' : '';
 
-		this.alerStaticIcon = (variant, icon) =>
-			page
-				.locator(`.alert.alert-${variant}`)
-				.locator(`.lexicon-icon.lexicon-icon-${icon}`);
+			const alertLocators: AlertLocatorsBase = {
+				icon: (icon) =>
+					this.page
+						.locator(`.alert${fluidClass}.alert-${variant}`)
+						.locator(`.lexicon-icon.lexicon-icon-${icon}`),
+				lead: (leadText) =>
+					this.page
+						.locator(`.alert${fluidClass}.alert-${variant}`)
+						.locator('.lead')
+						.getByText(leadText),
+				locator: this.page.locator(
+					`.alert${fluidClass}.alert-${variant}`
+				),
+			};
 
-		this.alertStaticBold = (variant, boldText) =>
-			page
-				.locator(`.alert.alert-${variant}`)
-				.locator('.lead')
-				.getByText(boldText);
+			if (type === 'stripe') {
+				return {
+					...alertLocators,
+					close: this.page.locator('.alert-close-button'),
+				} as StripeAlertLocators;
+			}
+
+			return alertLocators;
+		};
 
 		this.alertSuccessSubmit = {
 			closeButton: page

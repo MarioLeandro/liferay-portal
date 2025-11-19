@@ -26,42 +26,42 @@ test('Verify alert contains all required attributes: icon, type text, and descri
 }) => {
 	await test.step('Check if alert-success is present', async () => {
 		await expect(
-			claySamplePage.alertStatic('success').first()
+			claySamplePage.alert('embedded', 'success').locator.first()
 		).toBeAttached();
 	});
 
 	await test.step('Check if alert-success displays the correct indicator icon', async () => {
 		await expect(
 			claySamplePage
-				.alerStaticIcon('success', 'check-circle-full')
+				.alert('embedded', 'success')
+				.icon('check-circle-full')
 				.first()
 		).toBeVisible();
 	});
 
 	await test.step('Check if alert-success displays the correct lead text', async () => {
 		await expect(
-			claySamplePage.alertStaticBold('success', 'Success').first()
+			claySamplePage.alert('embedded', 'success').lead('Success').first()
 		).toBeVisible();
 	});
 
 	await test.step('Check if the alert-success displays description text', async () => {
-		await expect(claySamplePage.alertStatic('success').first()).toHaveText(
-			'Success:This is a success message.'
-		);
+		await expect(
+			claySamplePage.alert('embedded', 'success').locator.first()
+		).toHaveText('Success:This is a success message.');
 	});
 });
 
 test('Verify the keyword is semi-bold when alert contains status icon and keyword.', async ({
 	claySamplePage,
 }) => {
-	const successAlert = claySamplePage.alertStatic('success').first();
+	const successAlert = claySamplePage
+		.alert('embedded', 'success')
+		.locator.first();
 
 	await expect(successAlert).toHaveCSS('font-weight', '400');
 
-	await expect(successAlert.locator('.lead')).toHaveCSS(
-		'font-weight',
-		'600' // Semi-bold
-	);
+	await expect(successAlert.locator('.lead')).toHaveCSS('font-weight', '600');
 });
 
 test('Verify toast message popup can be closed manually.', async ({
