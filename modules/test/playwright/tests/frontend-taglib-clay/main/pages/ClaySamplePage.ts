@@ -69,23 +69,23 @@ export class ClaySamplePage extends POM {
 
 			const alertLocators: AlertLocatorsBase = {
 				icon: (icon) =>
-					this.page
+					page
 						.locator(`.alert${fluidClass}.alert-${variant}`)
 						.locator(`.lexicon-icon.lexicon-icon-${icon}`),
 				lead: (leadText) =>
-					this.page
+					page
 						.locator(`.alert${fluidClass}.alert-${variant}`)
 						.locator('.lead')
 						.getByText(leadText),
-				locator: this.page.locator(
-					`.alert${fluidClass}.alert-${variant}`
-				),
+				locator: page.locator(`.alert${fluidClass}.alert-${variant}`),
 			};
 
 			if (type === 'stripe') {
 				return {
 					...alertLocators,
-					close: this.page.locator('.alert-close-button'),
+					close: page
+						.locator(`.alert${fluidClass}.alert-${variant}`)
+						.locator('.close'),
 				} as StripeAlertLocators;
 			}
 
