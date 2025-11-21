@@ -44,13 +44,12 @@ export class ClaySamplePage extends POM {
 		type: 'embedded' | 'stripe',
 		variant: string
 	) => AlertLocatorsBase | StripeAlertLocators;
-
-	readonly alertSuccessSubmit: {
-		closeButton: Locator;
-		locator: Locator;
-		trigger: Locator;
-	};
-	readonly alertDisappearsAfterFiveSeconds: {
+	readonly triggeredAlert: (
+		alertMessage: string,
+		triggerText: string,
+		variant: string
+	) => {
+		close?: Locator;
 		locator: Locator;
 		trigger: Locator;
 	};
@@ -92,23 +91,18 @@ export class ClaySamplePage extends POM {
 			return alertLocators;
 		};
 
-		this.alertSuccessSubmit = {
-			closeButton: page
+		this.triggeredAlert = (
+			alertMessage: string,
+			triggerText: string,
+			variant: string
+		) => ({
+			close: page
 				.locator('.alert-notifications')
-				.locator('.alert.alert-success')
+				.locator(`.alert.alert-${variant}`)
 				.locator('.close'),
-			locator: page.getByText(
-				'Success:Your request completed successfully.'
-			),
-			trigger: page.getByText('Success Submit'),
-		};
-
-		this.alertDisappearsAfterFiveSeconds = {
-			locator: page.getByText(
-				'Info:Your request completed successfully.'
-			),
-			trigger: page.getByText('Disappears After 5 Seconds'),
-		};
+			locator: page.getByText(alertMessage),
+			trigger: this.page.getByText(triggerText),
+		});
 
 		this.managementToolbarActiveState = page.locator(
 			'#managementToolbarActiveState'

@@ -74,11 +74,16 @@ test.describe('Tests for ClayAlert', () => {
 	test('Verify toast message popup can be closed manually.', async ({
 		claySamplePage,
 	}) => {
-		await claySamplePage.alertSuccessSubmit.trigger.click();
+		const alertSuccessSubmit = claySamplePage.triggeredAlert(
+			'Success:Your request completed successfully.',
+			'Success Submit',
+			'success'
+		);
+		await alertSuccessSubmit.trigger.click();
 
 		await clickAndExpectToBeHidden({
-			target: claySamplePage.alertSuccessSubmit.locator,
-			trigger: claySamplePage.alertSuccessSubmit.closeButton,
+			target: alertSuccessSubmit.locator,
+			trigger: alertSuccessSubmit.close,
 		});
 	});
 
@@ -86,16 +91,17 @@ test.describe('Tests for ClayAlert', () => {
 		claySamplePage,
 		page,
 	}) => {
-		await claySamplePage.alertDisappearsAfterFiveSeconds.trigger.click();
+		const alertDisappearsAfterFiveSeconds = claySamplePage.triggeredAlert(
+			'Info:Your request completed successfully.',
+			'Disappears After 5 Seconds',
+			'info'
+		);
+		await alertDisappearsAfterFiveSeconds.trigger.click();
 
-		await expect(
-			claySamplePage.alertDisappearsAfterFiveSeconds.locator
-		).toBeVisible();
+		await expect(alertDisappearsAfterFiveSeconds.locator).toBeVisible();
 
 		await page.waitForTimeout(5000);
 
-		await expect(
-			claySamplePage.alertDisappearsAfterFiveSeconds.locator
-		).toBeHidden();
+		await expect(alertDisappearsAfterFiveSeconds.locator).toBeHidden();
 	});
 });
