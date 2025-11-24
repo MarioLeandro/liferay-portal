@@ -54,7 +54,11 @@ export class ClaySamplePage extends POM {
 			close: this.page
 				.getByRole('alert')
 				.filter({hasText: alertMessage})
-				.locator('[aria-label="Close"]'),
+				.locator(
+					triggerText
+						? '+ [aria-label="Close"]'
+						: '[aria-label="Close"]'
+				),
 			icon: this.page
 				.getByRole('alert')
 				.filter({hasText: alertMessage})
