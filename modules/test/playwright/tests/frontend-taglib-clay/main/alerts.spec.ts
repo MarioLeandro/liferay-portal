@@ -27,31 +27,33 @@ test.describe('Tests for ClayAlert', () => {
 	}) => {
 		await test.step('Check if alert-success is present', async () => {
 			await expect(
-				claySamplePage.alert('embedded', 'success').locator.first()
+				claySamplePage
+					.alert('Success:This is a success message.')
+					.locator.first()
 			).toBeAttached();
 		});
 
 		await test.step('Check if alert-success displays the correct indicator icon', async () => {
 			await expect(
 				claySamplePage
-					.alert('embedded', 'success')
-					.icon('check-circle-full')
-					.first()
+					.alert('Success:This is a success message.')
+					.icon.first()
 			).toBeVisible();
 		});
 
 		await test.step('Check if alert-success displays the correct lead text', async () => {
 			await expect(
 				claySamplePage
-					.alert('embedded', 'success')
-					.lead('Success')
-					.first()
+					.alert('Success:This is a success message.')
+					.lead.first()
 			).toBeVisible();
 		});
 
 		await test.step('Check if the alert-success displays description text', async () => {
 			await expect(
-				claySamplePage.alert('embedded', 'success').locator.first()
+				claySamplePage
+					.alert('Success:This is a success message.')
+					.locator.first()
 			).toHaveText('Success:This is a success message.');
 		});
 	});
@@ -60,7 +62,7 @@ test.describe('Tests for ClayAlert', () => {
 		claySamplePage,
 	}) => {
 		const successAlert = claySamplePage
-			.alert('embedded', 'success')
+			.alert('Success:This is a success message.')
 			.locator.first();
 
 		await expect(successAlert).toHaveCSS('font-weight', '400');
@@ -74,10 +76,9 @@ test.describe('Tests for ClayAlert', () => {
 	test('Verify toast message popup can be closed manually.', async ({
 		claySamplePage,
 	}) => {
-		const alertSuccessSubmit = claySamplePage.triggeredAlert(
+		const alertSuccessSubmit = claySamplePage.alert(
 			'Success:Your request completed successfully.',
-			'Success Submit',
-			'success'
+			'Success Submit'
 		);
 		await alertSuccessSubmit.trigger.click();
 
@@ -91,10 +92,9 @@ test.describe('Tests for ClayAlert', () => {
 		claySamplePage,
 		page,
 	}) => {
-		const alertDisappearsAfterFiveSeconds = claySamplePage.triggeredAlert(
+		const alertDisappearsAfterFiveSeconds = claySamplePage.alert(
 			'Info:Your request completed successfully.',
-			'Disappears After 5 Seconds',
-			'info'
+			'Disappears After 5 Seconds'
 		);
 		await alertDisappearsAfterFiveSeconds.trigger.click();
 

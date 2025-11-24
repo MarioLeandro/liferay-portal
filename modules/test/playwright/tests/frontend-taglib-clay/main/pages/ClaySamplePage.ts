@@ -29,29 +29,16 @@ export enum TabName {
 	VERTICAL_NAV = 'Vertical Nav',
 }
 
-interface AlertLocatorsBase {
-	icon: (icon: string) => Locator;
-	lead: (leadText: string) => Locator;
-	locator: Locator;
-}
-
-export interface StripeAlertLocators extends AlertLocatorsBase {
-	close: Locator;
-}
-
 export class ClaySamplePage extends POM {
 	readonly alert: (
-		type: 'embedded' | 'stripe',
-		variant: string
-	) => AlertLocatorsBase | StripeAlertLocators;
-	readonly triggeredAlert: (
-		alertMessage: string,
-		triggerText: string,
-		variant: string
+		talertMessage: string,
+		triggerText?: string
 	) => {
 		close?: Locator;
+		icon: Locator;
+		lead: Locator;
 		locator: Locator;
-		trigger: Locator;
+		trigger?: Locator;
 	};
 	readonly managementToolbarActiveState: Locator;
 	readonly managementToolbarDefaultState: Locator;
@@ -63,45 +50,23 @@ export class ClaySamplePage extends POM {
 	constructor(page: Page, url: string) {
 		super(page, url);
 
-		this.alert = (type: 'embedded' | 'stripe', variant: string) => {
-			const fluidClass = type === 'stripe' ? '.alert-fluid' : '';
-
-			const alertLocators: AlertLocatorsBase = {
-				icon: (icon) =>
-					page
-						.locator(`.alert${fluidClass}.alert-${variant}`)
-						.locator(`.lexicon-icon.lexicon-icon-${icon}`),
-				lead: (leadText) =>
-					page
-						.locator(`.alert${fluidClass}.alert-${variant}`)
-						.locator('.lead')
-						.getByText(leadText),
-				locator: page.locator(`.alert${fluidClass}.alert-${variant}`),
-			};
-
-			if (type === 'stripe') {
-				return {
-					...alertLocators,
-					close: page
-						.locator(`.alert${fluidClass}.alert-${variant}`)
-						.locator('.close'),
-				} as StripeAlertLocators;
-			}
-
-			return alertLocators;
-		};
-
-		this.triggeredAlert = (
-			alertMessage: string,
-			triggerText: string,
-			variant: string
-		) => ({
-			close: page
-				.locator('.alert-notifications')
-				.locator(`.alert.alert-${variant}`)
-				.locator('.close'),
-			locator: page.getByText(alertMessage),
-			trigger: this.page.getByText(triggerText),
+		this.alert = (alertMessage: string, triggerText?: string) => ({
+			close: this.page
+				.getByRole('alert')
+				.filter({hasText: alertMessage})
+				.locator('+ [aria-label="Close"]'),
+			icon: this.page
+				.getByRole('alert')
+				.filter({hasText: alertMessage})
+				.locator('.alert-indicator .lexicon-icon'),
+			lead: this.page
+				.getByRole('alert')
+				.filter({hasText: alertMessage})
+				.locator('.lead'),
+			locator: this.page
+				.getByRole('alert')
+				.filter({hasText: alertMessage}),
+			trigger: this.page.getByRole('button', {name: triggerText}),
 		});
 
 		this.managementToolbarActiveState = page.locator(
