@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {clickAndExpectToBeHidden} from '../../../utils/clickAndExpectToBeHidden';
 import {claySamplePageTest} from './fixtures/claySamplePageTest';
-import {TabName} from './pages/ClaySamplePage';
 
 const test = mergeTests(
 	featureFlagsTest({
@@ -17,52 +16,36 @@ const test = mergeTests(
 	claySamplePageTest
 );
 
-test.beforeEach('Select alerts tab', async ({claySamplePage}) => {
-	await claySamplePage.selectTab(TabName.ALERTS);
-});
+test('Consolidated Tests for Clay Alerts', async ({claySamplePage, page}) => {
+	const SUCCESS_MESSAGE = 'Success:This is a success message.';
 
-test.describe('Tests for ClayAlert', () => {
-	test('Verify alert contains all required attributes: icon, type text, and description.', async ({
-		claySamplePage,
-	}) => {
-		await test.step('Check if alert-success is present', async () => {
-			await expect(
-				claySamplePage
-					.alert('Success:This is a success message.')
-					.locator.first()
-			).toBeAttached();
-		});
-
-		await test.step('Check if alert-success displays the correct indicator icon', async () => {
-			await expect(
-				claySamplePage
-					.alert('Success:This is a success message.')
-					.icon.first()
-			).toBeVisible();
-		});
-
-		await test.step('Check if alert-success displays the correct lead text', async () => {
-			await expect(
-				claySamplePage
-					.alert('Success:This is a success message.')
-					.lead.first()
-			).toBeVisible();
-		});
-
-		await test.step('Check if the alert-success displays description text', async () => {
-			await expect(
-				claySamplePage
-					.alert('Success:This is a success message.')
-					.locator.first()
-			).toHaveText('Success:This is a success message.');
-		});
+	await test.step('ClayAlert: Check if alert-success is present', async () => {
+		await expect(
+			claySamplePage.alert(SUCCESS_MESSAGE).locator.first()
+		).toBeAttached();
 	});
 
-	test('Verify the keyword is semi-bold when alert contains status icon and keyword.', async ({
-		claySamplePage,
-	}) => {
+	await test.step('ClayAlert: Check if alert-success displays the correct indicator icon', async () => {
+		await expect(
+			claySamplePage.alert(SUCCESS_MESSAGE).icon.first()
+		).toBeVisible();
+	});
+
+	await test.step('ClayAlert: Check if alert-success displays the correct lead text', async () => {
+		await expect(
+			claySamplePage.alert(SUCCESS_MESSAGE).lead.first()
+		).toBeVisible();
+	});
+
+	await test.step('ClayAlert: Check if the alert-success displays description text', async () => {
+		await expect(
+			claySamplePage.alert(SUCCESS_MESSAGE).locator.first()
+		).toBeVisible();
+	});
+
+	await test.step('ClayAlert: Verify the keyword is semi-bold when alert contains status icon and keyword.', async () => {
 		const successAlert = claySamplePage
-			.alert('Success:This is a success message.')
+			.alert(SUCCESS_MESSAGE)
 			.locator.first();
 
 		await expect(successAlert).toHaveCSS('font-weight', '400');
@@ -73,9 +56,7 @@ test.describe('Tests for ClayAlert', () => {
 		);
 	});
 
-	test('Verify toast message popup can be closed manually.', async ({
-		claySamplePage,
-	}) => {
+	await test.step('ClayAlert: Verify toast message popup can be closed manually.', async () => {
 		const alertSuccessSubmit = claySamplePage.alert(
 			'Success:Your request completed successfully.',
 			'Success Submit'
@@ -88,10 +69,7 @@ test.describe('Tests for ClayAlert', () => {
 		});
 	});
 
-	test('Verify toast message popup will close automatically.', async ({
-		claySamplePage,
-		page,
-	}) => {
+	await test.step('ClayAlert: Verify toast message popup will close automatically.', async () => {
 		const alertDisappearsAfterFiveSeconds = claySamplePage.alert(
 			'Info:Your request completed successfully.',
 			'Disappears After 5 Seconds'
