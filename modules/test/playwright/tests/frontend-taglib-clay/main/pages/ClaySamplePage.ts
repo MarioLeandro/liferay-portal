@@ -34,7 +34,7 @@ export class ClaySamplePage extends POM {
 		talertMessage: string,
 		triggerText?: string
 	) => {
-		close?: Locator;
+		close: Locator;
 		icon: Locator;
 		lead: Locator;
 		locator: Locator;
@@ -54,7 +54,7 @@ export class ClaySamplePage extends POM {
 			close: this.page
 				.getByRole('alert')
 				.filter({hasText: alertMessage})
-				.locator('+ [aria-label="Close"]'),
+				.locator('[aria-label="Close"]'),
 			icon: this.page
 				.getByRole('alert')
 				.filter({hasText: alertMessage})
