@@ -82,4 +82,8 @@ test('Consolidated Tests for Clay Alerts', async ({claySamplePage, page}) => {
 
 		await expect(alertDisappearsAfterFiveSeconds.locator).toBeHidden();
 	});
+
+	await test.step('ClayAlertStripe: Check if the stripe alert-success displays close button', async () => {
+		await expect(claySamplePage.alert(SUCCESS_MESSAGE).close).toBeVisible();
+	});
 });
