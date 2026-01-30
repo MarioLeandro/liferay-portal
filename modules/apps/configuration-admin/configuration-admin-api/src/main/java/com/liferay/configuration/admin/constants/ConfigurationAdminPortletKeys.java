@@ -19,4 +19,13 @@ public class ConfigurationAdminPortletKeys {
 	public static final String SYSTEM_SETTINGS =
 		"com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet";
 
+	public static final String APPLICATIONS_HOME =
+		"com_liferay_site_admin_web_portlet_ApplicationsHomePortlet";
+
+	public static final String APPLICATIONS_HOME_ALT =
+		"com_liferay_site_admin_web_portlet_ApplicationsHomeAltPortlet";
+
+	public static final String COMMERCE_HOME =
+		"com_liferay_site_admin_web_portlet_CommerceHomePortlet";
+
 }

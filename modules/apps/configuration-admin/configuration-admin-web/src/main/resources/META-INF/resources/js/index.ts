@@ -8,3 +8,11 @@
 import EditConfigurationActionDropdownPropsTransformer from './EditConfigurationActionDropdownPropsTransformer';
 
 export {EditConfigurationActionDropdownPropsTransformer};
+
+export {default as ApplicationsHome} from './ApplicationsHome';
+
+export {default as ApplicationsHomeAlt} from './ApplicationsHomeAlt';
+
+export {default as CommerceHome} from './CommerceHome';
+
+

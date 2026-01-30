@@ -16,7 +16,8 @@ taglib uri="http://liferay.com/tld/learn" prefix="liferay-learn" %><%@
 taglib uri="http://liferay.com/tld/site-navigation" prefix="liferay-site-navigation" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
-taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
+taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %><%@ 
+taglib uri="http://liferay.com/tld/react" prefix="react" %>
 
 <%@ page import="com.liferay.configuration.admin.category.ConfigurationCategory" %><%@
 page import="com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys" %><%@
@@ -54,7 +55,8 @@ page import="com.liferay.portal.kernel.util.ReleaseInfo" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.site.navigation.taglib.servlet.taglib.util.BreadcrumbEntriesUtil" %><%@
-page import="com.liferay.taglib.servlet.PipingServletResponseFactory" %>
+page import="com.liferay.taglib.servlet.PipingServletResponseFactory" %><%@
+page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
 
 <%@ page import="jakarta.portlet.PortletURL" %>
 
