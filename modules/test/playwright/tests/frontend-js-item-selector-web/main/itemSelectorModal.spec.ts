@@ -111,7 +111,7 @@ test('Item Selector Modal with single selection', async ({
 		await expect(itemSelectorSamplePage.modal.selectButton).toBeDisabled();
 
 		const items = itemSelectorSamplePage.page.locator(
-			'.card:has(>.custom-radio)'
+			'.card:has(.custom-radio)'
 		);
 
 		const numOfItems = await items.count();
