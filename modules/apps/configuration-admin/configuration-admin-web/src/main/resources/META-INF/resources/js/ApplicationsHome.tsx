@@ -11,9 +11,9 @@ import HomePageLayout from './HomePageLayout';
 import { CategoryItem, HomeProps } from './types';
 
 
-const ApplicationsHome = ({ categories = [], homeTitle, homeLogo, homeTitleColor }: HomeProps) => {
+const ApplicationsHome = ({ categories = [], homeTitle, homeLogo }: HomeProps) => {
     return (
-        <HomePageLayout homeLogo={homeLogo} homeTitle={homeTitle} homeTitleCentralized homeTitleColor={homeTitleColor}>
+        <HomePageLayout homeLogo={homeLogo} homeTitle={homeTitle} homeTitleCentralized>
             {(categories as Array<CategoryItem>).map((item) => (
                 <ClayLayout.Col className="mb-4" key={item.id} md={3} sm={6}>
                     <CategoryCard item={item} />

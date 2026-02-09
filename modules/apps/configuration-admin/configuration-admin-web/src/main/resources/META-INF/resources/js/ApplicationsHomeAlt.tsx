@@ -6,35 +6,42 @@
 import ClayLayout from '@clayui/layout';
 import React from 'react';
 
-import CategoryCardSmall from './CategoryCardSmall';
+import CategoryCardHorizontal from './CategoryCardHorizontal';
 import HomePageLayout from './HomePageLayout';
-import { CategoryItemGrouped, HomeProps } from './types';
+import {CategoryItemGrouped, HomeProps} from './types';
 
+const ApplicationsHomeAlt = ({
+	categories = [],
+	homeTitle,
+	homeLogo,
+}: HomeProps) => {
+	return (
+		<HomePageLayout homeLogo={homeLogo} homeTitle={homeTitle}>
+			{(categories as Array<CategoryItemGrouped>).map((group) => (
+				<ClayLayout.ContainerFluid className="mb-4" key={group.label}>
 
+			<ClayLayout.ContentRow className="mb-2 pb-2">
+				<ClayLayout.ContentCol expand>
+					<h3 className="font-weight-semibold mb-0 text-3 text-secondary text-uppercase">
+						{group.label}
+					</h3>
+				</ClayLayout.ContentCol>
+			</ClayLayout.ContentRow>
 
-const ApplicationsHomeAlt = ({ categories = [], homeTitle, homeLogo }: HomeProps) => {
-    return (
-        <HomePageLayout homeLogo={homeLogo} homeTitle={homeTitle}>
-            {(categories as Array<CategoryItemGrouped>).map((group) => (
-                <section className="mb-4 w-100" key={group.label}>
-                    <div className="mb-2 pb-2 row">
-                        <div className="col-12">
-                            <h3 className="font-weight-bold mb-0 text-4 text-secondary text-uppercase">
-                                {group.label}
-                            </h3>
-                        </div>
-                    </div>
-
-                    <ClayLayout.Row>
-                        {group.panelApps.map((app) => (
-                            <ClayLayout.Col className="mb-3" key={app.id} md={4} sm={6}>
-                                <CategoryCardSmall item={app} />
-                            </ClayLayout.Col>
-                        ))}
-                    </ClayLayout.Row>
-                </section>
-            ))}
-        </HomePageLayout>
-    );
+				<ClayLayout.Row>
+					{group.panelApps.map((app) => (
+						<ClayLayout.Col
+							key={app.id}
+							md={4}
+							sm={6} 
+						>
+							<CategoryCardHorizontal item={app} />
+						</ClayLayout.Col>
+					))}
+				</ClayLayout.Row>
+			</ClayLayout.ContainerFluid>
+			))}
+		</HomePageLayout>
+	);
 };
 export default ApplicationsHomeAlt;

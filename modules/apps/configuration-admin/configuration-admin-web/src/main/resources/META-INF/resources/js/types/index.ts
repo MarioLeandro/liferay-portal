@@ -22,5 +22,4 @@ export type HomeProps = {
     categories: Array<CategoryItemGrouped | CategoryItem>;
     homeLogo?: string;
     homeTitle: string;
-    homeTitleColor?: DisplayType;
 };
