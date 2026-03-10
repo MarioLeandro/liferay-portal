@@ -246,11 +246,6 @@ $panel-secondary: map-deep-merge(
 		header: (
 			border-color:
 				var(--panel-secondary-panel-header-border-color, $gray-300),
-			link:
-				var(
-					--panel-secondary-panel-header-link,
-					$panel-secondary-header-link
-				),
 		),
 
 		footer: (

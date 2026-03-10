@@ -112,7 +112,9 @@ $input-padding-y-lg: $input-padding-y !default;
 // Input Sm (.form-control-sm)
 
 $input-border-radius-sm: $border-radius !default;
+$input-font-size-sm: $input-btn-font-size-sm !default;
 $input-height-sm: 2rem !default; // 32px
+$input-line-height-sm: $input-btn-line-height-sm !default;
 $input-padding-x-sm: 0.75rem !default; // 12px
 $input-padding-y-sm: 0.25rem !default;
 
