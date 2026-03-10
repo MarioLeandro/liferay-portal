@@ -1,0 +1,318 @@
+$panel-bg: var(--panel-background-color, $white) !default;
+$panel-border-color: var(--panel-border-color, transparent) !default;
+$panel-border-style: var(--panel-border-style, solid) !default;
+
+$panel-border-bottom-width: var(--panel-border-bottom-width, 1px) !default;
+$panel-border-left-width: var(--panel-border-left-width, 1px) !default;
+$panel-border-right-width: var(--panel-border-right-width, 1px) !default;
+$panel-border-top-width: var(--panel-border-top-width, 1px) !default;
+$panel-border-width: $panel-border-top-width $panel-border-right-width
+	$panel-border-bottom-width $panel-border-left-width !default;
+
+$panel-border-radius: var(--panel-border-radius, $border-radius) !default;
+$panel-box-shadow: var(--panel-box-shadow, none) !default;
+$panel-margin-bottom: var(--panel-margin-bottom, $spacer) !default;
+
+// Panel Header
+
+$panel-header-border-bottom-width: var(
+	--panel-header-border-bottom-width,
+	0
+) !default;
+$panel-header-offset-border-radius: var(
+	--panel-header-offset-border-radius,
+	calc(#{$panel-border-radius} - #{$panel-border-top-width})
+) !default;
+
+$panel-header-font-size: var(--panel-header-font-size, 14px) !default;
+$panel-header-line-height: var(
+	--panel-header-line-height,
+	$headings-line-height
+) !default;
+$panel-header-padding-x: var(--panel-header-padding-x, 20px) !default;
+$panel-header-padding-y: var(--panel-header-padding-y, 12px) !default;
+
+$panel-header-collapse-icon-bottom: var(
+	--panel-header-collapse-icon-bottom,
+	auto
+) !default;
+$panel-header-collapse-icon-font-size: var(
+	--panel-header-collapse-icon-font-size,
+	12px
+) !default;
+$panel-header-collapse-icon-left: var(
+	--panel-header-collapse-icon-left,
+	auto
+) !default;
+$panel-header-collapse-icon-right: var(
+	--panel-header-collapse-icon-right,
+	auto
+) !default;
+$panel-header-collapse-icon-top: var(
+	--panel-header-collapse-icon-top,
+	clay-collapse-icon-align(
+		$panel-header-padding-y,
+		0,
+		1em,
+		$panel-header-line-height
+	)
+) !default;
+
+$panel-header-collapse-icon-padding-left: var(
+	--panel-header-collapse-icon-padding-lef,
+	20px
+) !default;
+$panel-header-collapse-icon-padding-right: var(
+	--panel-header-collapse-icon-padding-right,
+	45px
+) !default;
+
+$panel-header-link-text-decoration: none !default;
+
+$panel-header-link-hover-text-decoration: none !default;
+
+$panel-header-link: () !default;
+$panel-header-link: map-deep-merge(
+	(
+		color: var(--panel-header-link-color, inherit),
+		display: block,
+		text-decoration:
+			var(
+				--panel-header-link-text-decoration,
+				$panel-header-link-text-decoration
+			),
+		transition: box-shadow 0.15s ease-in-out,
+
+		hover: (
+			color: var(--panel-header-link-hover-color, inherit),
+			text-decoration:
+				var(
+					--panel-header-link-hover-text-decoration,
+					$panel-header-link-hover-text-decoration
+				),
+		),
+
+		focus: (
+			box-shadow: $component-focus-box-shadow,
+			outline: 0,
+		),
+	),
+	$panel-header-link
+);
+
+$panel-header-collapsed-link: () !default;
+
+// Panel Body
+
+$panel-body-padding-x: var(--panel-body-panel-body-padding-x, 20px) !default;
+$panel-body-padding-y: var(--panel-body-panel-body-padding-y, 12px) !default;
+
+// Panel Footer
+
+$panel-footer-border-top-width: var(
+	--panel-footer-panel-footer-border-top-width,
+	0
+) !default;
+$panel-footer-offset-border-radius: var(
+	--panel-footer-offset-border-radius,
+	calc(#{$panel-border-radius} - #{$panel-border-bottom-width})
+) !default;
+
+$panel-footer-padding-x: var(
+	--panel-footer-padding-x,
+	$panel-header-padding-x
+) !default;
+$panel-footer-padding-y: var(
+	--panel-footer-padding-y,
+	$panel-header-padding-y
+) !default;
+
+// Panel Title
+
+$panel-title-font-size: var(--panel-title-font-size, 14px) !default;
+$panel-title-font-weight: var(
+	--panel-title-font-weight,
+	$font-weight-semi-bold
+) !default;
+$panel-title-text-transform: var(
+	--panel-title-text-transform,
+	uppercase
+) !default;
+
+// Panel Title Small Element
+
+$panel-title-small-font-size: var(--panel-title-small-font-size, 100%) !default;
+$panel-title-small-margin-left: var(
+	--panel-title-small-margin-left,
+	6px
+) !default;
+
+// Panel Group
+
+$panel-group-panel-margin-bottom: var(
+	--panel-group-panel-margin-bottom,
+	calc(#{$panel-border-bottom-width} * -1)
+) !default;
+
+$panel-group-panel-unstyled: () !default;
+$panel-group-panel-unstyled: map-deep-merge(
+	(
+		margin-bottom: var(--panel-group-panel-unstyled-margin-bottom, 24px),
+	),
+	$panel-group-panel-unstyled
+);
+
+// Panel Group Sm
+
+$panel-group-sm: () !default;
+$panel-group-sm: map-deep-merge(
+	(
+		font-size: var(--panel-group-sm-font-size, 14px),
+		header: (
+			padding-bottom:
+				var(--panel-group-sm-panel-header-padding-bottom, 8px),
+			padding-top: var(--panel-group-sm-panel-header-padding-top, 8px),
+		),
+
+		title: (
+			font-size: var(--panel-group-sm-panel-title-font-size, 12px),
+		),
+
+		collapse-icon: (
+			top: var(--panel-group-sm-panel-header-collapse-icon-top, 11px),
+		),
+	),
+	$panel-group-sm
+);
+
+$panel-group-sm-panel-unstyled: () !default;
+$panel-group-sm-panel-unstyled: map-deep-merge(
+	(
+		margin-bottom: var(--panel-group-sm-panel-unstyled-margin-bottom, 16px),
+	),
+	$panel-group-sm-panel-unstyled
+);
+
+// Panel Group Flush
+
+$panel-group-flush-body-margin-bottom: var(
+	--panel-group-flush-body-margin-bottom,
+	24px
+) !default;
+$panel-group-flush-body-padding: var(
+	--panel-group-flush-body-padding,
+	0px
+) !default;
+
+$panel-group-flush-collapse-icon-left: var(
+	--panel-group-flush-collapse-icon-left,
+	auto
+) !default;
+$panel-group-flush-collapse-icon-right: var(
+	--panel-group-flush-collapse-icon-right,
+	0px
+) !default;
+$panel-group-flush-collapse-icon-padding-left: var(
+	--panel-group-flush-collapse-icon-padding-left,
+	0px
+) !default;
+$panel-group-flush-collapse-icon-padding-right: var(
+	--panel-group-flush-collapse-icon-padding-right,
+	24px
+) !default;
+
+$panel-group-flush-panel-unstyled: () !default;
+$panel-group-flush-panel-unstyled: map-deep-merge(
+	(
+		margin-bottom:
+			var(--panel-group-flush-panel-unstyled-margin-bottom, 24px),
+		body: (
+			margin-bottom:
+				var(--panel-group-flush-panel-unstyled-body-margin-bottom, 0),
+		),
+	),
+	$panel-group-flush-panel-unstyled
+);
+
+// Panel Variants
+
+$panel-secondary-header-link: () !default;
+
+$panel-secondary: () !default;
+$panel-secondary: map-deep-merge(
+	(
+		border-color: var(--panel-secondary-border-color, $gray-300),
+		color: var(--panel-secondary-color, $gray-600),
+		header: (
+			border-color:
+				var(--panel-secondary-panel-header-border-color, $gray-300),
+			link:
+				var(
+					--panel-secondary-panel-header-link,
+					$panel-secondary-header-link
+				),
+		),
+
+		footer: (
+			border-color:
+				var(--panel-secondary-panel-footer-border-color, $gray-300),
+		),
+	),
+	$panel-secondary
+);
+
+// Panel Unstyled
+
+$panel-unstyled-header-link: () !default;
+$panel-unstyled-header-link: map-deep-merge(
+	(
+		border-radius: 1px,
+
+		focus: (
+			box-shadow: #{0 0 0 4px $body-bg,
+			0 0 0 6px $primary-l0},
+		),
+	),
+	$panel-unstyled-header-link
+);
+
+$panel-unstyled: () !default;
+$panel-unstyled: map-deep-merge(
+	(
+		background-color: var(--panel-unstyled-background-color, transparent),
+		border-radius: var(--panel-unstyled-border-radius, 0),
+		border-width: var(--panel-unstyled-border-width, 0),
+		margin-bottom: var(--panel-unstyled-margin-bottom, 24px),
+		header: (
+			border-color:
+				var(--panel-unstyled-panel-header-border-color, $gray-500),
+			border-radius: var(--panel-unstyled-panel-header-border-radius, 0),
+			border-style: var(--panel-unstyled-panel-header-border-style, solid),
+			border-width:
+				var(--panel-unstyled-panel-header-border-width, 0 0 1px 0),
+			padding-left: var(--panel-unstyled-panel-header-padding-left, 0),
+			collapsed: (
+				border-color:
+					var(
+						--panel-unstyled-panel-header-collapsed-border-color,
+						$gray-500
+					),
+			),
+
+			link: $panel-unstyled-header-link,
+		),
+
+		collapse-icon: (
+			right: var(--panel-unstyled-panel-header-collapse-icon-right, 0),
+		),
+
+		body: (
+			padding: var(--panel-unstyled-panel-body-padding, 16px 0 0.1px 0),
+		),
+
+		footer: (
+			padding: var(--panel-unstyled-panel-footer-padding, 16px 0 0.1px 0),
+		),
+	),
+	$panel-unstyled
+);

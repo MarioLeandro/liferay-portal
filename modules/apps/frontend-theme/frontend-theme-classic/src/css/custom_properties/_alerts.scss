@@ -1,0 +1,574 @@
+$alert-border-radius: var(--alert-border-radius, $border-radius) !default;
+$alert-border-width: var(--alert-border-width, $border-width) !default;
+$alert-font-size: var(--alert-font-size, 0.875rem) !default;
+$alert-padding-x: var(--alert-padding-x, 1rem) !default;
+$alert-padding-y: var(--alert-padding-y, 0.9375rem) !default;
+
+$alert-lead-font-size: var(--alert-lead-font-size, $alert-font-size) !default;
+$alert-lead-font-weight: var(
+	--alert-lead-font-weight,
+	$font-weight-semi-bold
+) !default;
+
+// .alert-primary
+
+$alert-primary-bg: var(--alert-primary-background-color, $primary-l3) !default;
+$alert-primary-border-color: var(
+	--alert-primary-border-color,
+	$primary-l1
+) !default;
+$alert-primary-color: var(--alert-primary-color, $primary) !default;
+$alert-primary-close-color: var(
+	--alert-primary-close-color,
+	$alert-primary-color
+) !default;
+$alert-primary-close-hover-color: var(
+	--alert-primary-close-hover-color,
+	$alert-primary-color
+) !default;
+$alert-primary-lead-color: var(
+	--alert-primary-lead-color,
+	$alert-primary-color
+) !default;
+$alert-primary-link-color: var(
+	--alert-primary-link-color,
+	$link-color
+) !default;
+$alert-primary-link-hover-color: null !default;
+$alert-primary-btn: () !default;
+$alert-primary-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $primary-l1,
+		color: $primary,
+		hover: (
+			background-color: $primary,
+			border-color: $primary,
+			color: color-yiq($primary),
+		),
+		active: (
+			background-color: clay-darken($primary, 5%),
+			border-color: clay-darken($primary, 5%),
+		),
+	),
+	$alert-primary-btn
+);
+
+$alert-primary: () !default;
+$alert-primary: map-deep-merge(
+	(
+		background-color: $alert-primary-bg,
+		border-color: $alert-primary-border-color,
+		color: $alert-primary-color,
+		hr: (
+			border-top-color: clay-darken($alert-primary-border-color, 5%),
+		),
+		alert-btn: $alert-primary-btn,
+		close: (
+			color: $alert-primary-close-color,
+			hover: (
+				color: $alert-primary-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-primary-lead-color,
+		),
+		alert-link: (
+			color: $alert-primary-link-color,
+			hover: (
+				color: $alert-primary-link-hover-color,
+			),
+		),
+	),
+	$alert-primary
+);
+
+// .alert-secondary
+
+$alert-secondary-bg: var(
+	--alert-secondary-background-color,
+	$light-l1
+) !default;
+$alert-secondary-border-color: var(
+	--alert-secondary-border-color,
+	$light-d2
+) !default;
+$alert-secondary-color: var(--alert-secondary-color, $secondary) !default;
+$alert-secondary-close-color: var(
+	--alert-secondary-close-color,
+	$alert-secondary-color
+) !default;
+$alert-secondary-close-hover-color: var(
+	--alert-secondary-close-hover-color,
+	$alert-secondary-color
+) !default;
+$alert-secondary-lead-color: var(
+	--alert-secondary-lead-color,
+	$alert-secondary-color
+) !default;
+$alert-secondary-link-color: var(
+	--alert-secondary-link-color,
+	$link-color
+) !default;
+$alert-secondary-link-hover-color: null !default;
+$alert-secondary-btn: () !default;
+$alert-secondary-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $secondary-l1,
+		color: $secondary,
+		hover: (
+			background-color: $secondary,
+			border-color: $secondary,
+			color: color-yiq($secondary),
+		),
+		active: (
+			background-color: clay-darken($secondary, 5%),
+			border-color: clay-darken($secondary, 5%),
+		),
+	),
+	$alert-secondary-btn
+);
+
+$alert-secondary: () !default;
+$alert-secondary: map-deep-merge(
+	(
+		background-color: $alert-secondary-bg,
+		border-color: $alert-secondary-border-color,
+		color: $alert-secondary-color,
+		close: (
+			color: $alert-secondary-close-color,
+			hover: (
+				color: $alert-secondary-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-secondary-lead-color,
+		),
+		alert-link: (
+			color: $alert-secondary-link-color,
+			hover: (
+				color: $alert-secondary-link-hover-color,
+			),
+		),
+		alert-btn: $alert-secondary-btn,
+	),
+	$alert-secondary
+);
+
+// .alert-success
+
+$alert-success-bg: var(--alert-success-background-color, $success-l2) !default;
+$alert-success-border-color: var(
+	--alert-success-border-color,
+	$success-l1
+) !default;
+$alert-success-color: var(--alert-success-color, $success) !default;
+$alert-success-close-color: var(
+	--alert-success-close-color,
+	$alert-success-color
+) !default;
+$alert-success-close-hover-color: var(
+	--alert-success-close-hover-color,
+	$alert-success-color
+) !default;
+$alert-success-lead-color: var(
+	--alert-success-lead-color,
+	$alert-success-color
+) !default;
+$alert-success-link-color: var(
+	--alert-success-link-color,
+	$link-color
+) !default;
+$alert-success-link-hover-color: null !default;
+$alert-success-btn: () !default;
+$alert-success-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $success-l1,
+		color: $success,
+		hover: (
+			background-color: $success,
+			border-color: $success,
+			color: color-yiq($success),
+		),
+		active: (
+			background-color: clay-darken($success, 5%),
+			border-color: clay-darken($success, 5%),
+		),
+	),
+	$alert-success-btn
+);
+
+$alert-success: () !default;
+$alert-success: map-deep-merge(
+	(
+		background-color: $alert-success-bg,
+		border-color: $alert-success-border-color,
+		color: $alert-success-color,
+		close: (
+			color: $alert-success-close-color,
+			hover: (
+				color: $alert-success-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-success-lead-color,
+		),
+		alert-link: (
+			color: $alert-success-link-color,
+			hover: (
+				color: $alert-success-link-hover-color,
+			),
+		),
+		alert-btn: $alert-success-btn,
+	),
+	$alert-success
+);
+
+// .alert-info
+
+$alert-info-bg: var(--alert-info-background-color, $info-l2) !default;
+$alert-info-border-color: var(--alert-info-border-color, $info-l1) !default;
+$alert-info-color: var(--alert-info-color, $info) !default;
+$alert-info-close-color: var(
+	--alert-info-close-color,
+	$alert-info-color
+) !default;
+$alert-info-close-hover-color: var(
+	--alert-info-close-hover-color,
+	$alert-info-color
+) !default;
+$alert-info-lead-color: var(
+	--alert-info-lead-color,
+	$alert-info-color
+) !default;
+$alert-info-link-color: var(--alert-info-link-color, $link-color) !default;
+$alert-info-link-hover-color: null !default;
+$alert-info-btn: () !default;
+$alert-info-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $info-l1,
+		color: $info,
+		hover: (
+			background-color: $info,
+			border-color: $info,
+			color: color-yiq($info),
+		),
+		active: (
+			background-color: clay-darken($info, 5%),
+			border-color: clay-darken($info, 5%),
+		),
+	),
+	$alert-info-btn
+);
+
+$alert-info: () !default;
+$alert-info: map-deep-merge(
+	(
+		background-color: $alert-info-bg,
+		border-color: $alert-info-border-color,
+		color: $alert-info-color,
+		close: (
+			color: $alert-info-close-color,
+			hover: (
+				color: $alert-info-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-info-lead-color,
+		),
+		link: (
+			color: $alert-info-link-color,
+			hover: (
+				color: $alert-info-link-hover-color,
+			),
+		),
+		alert-btn: $alert-info-btn,
+	),
+	$alert-info
+);
+
+// .alert-warning
+
+$alert-warning-bg: var(--alert-warning-background-color, $warning-l2) !default;
+$alert-warning-border-color: var(
+	--alert-warning-border-color,
+	$warning-l1
+) !default;
+$alert-warning-color: var(--alert-warning-color, $warning) !default;
+$alert-warning-close-color: var(
+	--alert-warning-close-color,
+	$alert-warning-color
+) !default;
+$alert-warning-close-hover-color: var(
+	--alert-warning-close-hover-color,
+	$alert-warning-color
+) !default;
+$alert-warning-lead-color: var(
+	--alert-warning-lead-color,
+	$alert-warning-color
+) !default;
+$alert-warning-link-color: var(
+	--alert-warning-link-color,
+	$link-color
+) !default;
+$alert-warning-link-hover-color: null !default;
+$alert-warning-btn: () !default;
+$alert-warning-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $warning-l1,
+		color: $warning,
+		hover: (
+			background-color: $warning,
+			border-color: $warning,
+			color: color-yiq($warning),
+		),
+		active: (
+			background-color: clay-darken($warning, 5%),
+			border-color: clay-darken($warning, 5%),
+		),
+	),
+	$alert-warning-btn
+);
+
+$alert-warning: () !default;
+$alert-warning: map-deep-merge(
+	(
+		background-color: $alert-warning-bg,
+		border-color: $alert-warning-border-color,
+		color: $alert-warning-color,
+		close: (
+			color: $alert-warning-close-color,
+			hover: (
+				color: $alert-warning-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-warning-lead-color,
+		),
+		link: (
+			color: $alert-warning-link-color,
+			hover: (
+				color: $alert-warning-link-hover-color,
+			),
+		),
+		alert-btn: $alert-warning-btn,
+	),
+	$alert-warning
+);
+
+// .alert-danger
+
+$alert-danger-bg: var(--alert-danger-background-color, $danger-l2) !default;
+$alert-danger-border-color: var(
+	--alert-danger-border-color,
+	$danger-l1
+) !default;
+$alert-danger-color: var(--alert-danger-color, $danger) !default;
+$alert-danger-close-color: var(
+	--alert-danger-close-color,
+	$alert-danger-color
+) !default;
+$alert-danger-close-hover-color: var(
+	--alert-danger-close-hover-color,
+	$alert-danger-color
+) !default;
+$alert-danger-lead-color: var(
+	--alert-danger-lead-color,
+	$alert-danger-color
+) !default;
+$alert-danger-link-color: var(--alert-danger-link-color, $link-color) !default;
+$alert-danger-link-hover-color: null !default;
+$alert-danger-btn: () !default;
+$alert-danger-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $danger,
+		color: $danger,
+		hover: (
+			background-color: $danger,
+			color: color-yiq($danger),
+		),
+		active: (
+			background-color: clay-darken($danger, 5%),
+			border-color: clay-darken($danger, 5%),
+		),
+	),
+	$alert-danger-btn
+);
+
+$alert-danger: () !default;
+$alert-danger: map-deep-merge(
+	(
+		background-color: $alert-danger-bg,
+		border-color: $alert-danger-border-color,
+		color: $alert-danger-color,
+		close: (
+			color: $alert-danger-close-color,
+			hover: (
+				color: $alert-danger-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-danger-lead-color,
+		),
+		link: (
+			color: $alert-danger-link-color,
+			hover: (
+				color: $alert-danger-link-hover-color,
+			),
+		),
+		alert-btn: $alert-danger-btn,
+	),
+	$alert-danger
+);
+
+// .alert-light
+
+$alert-light-bg: var(--alert-light-background-color, $light-l2) !default;
+$alert-light-border-color: var(--alert-light-border-color, $light-l1) !default;
+$alert-light-color: var(--alert-light-color, $dark) !default;
+$alert-light-close-color: var(
+	--alert-light-close-color,
+	$alert-light-color
+) !default;
+$alert-light-close-hover-color: var(
+	--alert-light-close-hover-color,
+	$alert-light-color
+) !default;
+$alert-light-lead-color: var(
+	--alert-light-lead-color,
+	$alert-light-color
+) !default;
+$alert-light-link-color: var(--alert-light-link-color, $link-color) !default;
+$alert-light-link-hover-color: null !default;
+$alert-light-btn: () !default;
+$alert-light-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $dark-l1,
+		color: $dark,
+		hover: (
+			background-color: $dark,
+			border-color: $dark,
+			color: $white,
+		),
+		active: (
+			background-color: clay-darken($dark, 5%),
+			border-color: clay-darken($dark, 5%),
+		),
+	),
+	$alert-light-btn
+);
+
+$alert-light: () !default;
+$alert-light: map-deep-merge(
+	(
+		background-color: $alert-light-bg,
+		border-color: $alert-light-border-color,
+		color: $alert-light-color,
+		close: (
+			color: $alert-light-close-color,
+			hover: (
+				color: $alert-light-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-light-lead-color,
+		),
+		link: (
+			color: $alert-light-link-color,
+			hover: (
+				color: $alert-light-link-hover-color,
+			),
+		),
+		alert-btn: $alert-light-btn,
+	),
+	$alert-light
+);
+
+// .alert-dark
+
+$alert-dark-bg: var(--alert-dark-background-color, $dark-l2) !default;
+$alert-dark-border-color: var(--alert-dark-border-color, $dark-l1) !default;
+$alert-dark-color: var(--alert-dark-color, $light) !default;
+$alert-dark-close-color: var(
+	--alert-dark-close-color,
+	$alert-dark-color
+) !default;
+$alert-dark-close-hover-color: var(
+	--alert-dark-close-hover-color,
+	$alert-dark-color
+) !default;
+$alert-dark-lead-color: var(
+	--alert-dark-lead-color,
+	$alert-dark-color
+) !default;
+$alert-dark-link-color: var(
+	--alert-dark-link-color,
+	$alert-dark-color
+) !default;
+$alert-dark-link-hover-color: null !default;
+
+$alert-dark-btn: () !default;
+$alert-dark-btn: map-deep-merge(
+	(
+		background-color: $white,
+		border-color: $dark-l1,
+		color: $dark,
+		hover: (
+			background-color: $dark,
+			border-color: $dark,
+			color: color-yiq($dark),
+		),
+		active: (
+			background-color: clay-darken($dark, 5%),
+			border-color: clay-darken($dark, 5%),
+		),
+	),
+	$alert-dark-btn
+);
+
+$alert-dark: () !default;
+$alert-dark: map-deep-merge(
+	(
+		background-color: $alert-dark-bg,
+		border-color: $alert-dark-border-color,
+		color: $alert-dark-color,
+		close: (
+			color: $alert-dark-close-color,
+			hover: (
+				color: $alert-dark-close-hover-color,
+			),
+		),
+		lead: (
+			color: $alert-dark-lead-color,
+		),
+		link: (
+			color: $alert-dark-link-color,
+			hover: (
+				color: $alert-dark-link-hover-color,
+			),
+		),
+		alert-btn: $alert-dark-btn,
+	),
+	$alert-dark
+);
+
+$alert-palette: () !default;
+$alert-palette: map-deep-merge(
+	(
+		primary: $alert-primary,
+		secondary: $alert-secondary,
+		success: $alert-success,
+		info: $alert-info,
+		warning: $alert-warning,
+		danger: $alert-danger,
+		light: $alert-light,
+		dark: $alert-dark,
+	),
+	$alert-palette
+);

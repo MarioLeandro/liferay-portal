@@ -1,0 +1,147 @@
+$label-primary: () !default;
+$label-primary: map-deep-merge(
+	(
+		background-color: var(--label-primary-background-color, $white),
+		border-color: var(--label-primary-border-color, $primary-l1),
+		color: var(--label-primary-color, $primary),
+		href: (
+			hover: (
+				background-color:
+					var(--label-primary-hover-background-color, $white),
+				border-color:
+					var(--label-primary-hover-border-color, $primary-l1),
+				color: var(--label-primary-hover-color, $primary-d2),
+			),
+		),
+	),
+	$label-primary
+);
+
+$label-secondary: () !default;
+$label-secondary: map-deep-merge(
+	(
+		background-color: var(--label-secondary-background-color, $white),
+		border-color: var(--label-secondary-border-color, $secondary-l2),
+		color: var(--label-secondary-color, $secondary),
+		href: (
+			hover: (
+				background-color:
+					var(--label-secondary-hover-background-color, $white),
+				border-color:
+					var(--label-secondary-hover-border-color, $secondary-l2),
+				color: var(--label-secondary-hover-color, $gray-900),
+			),
+		),
+	),
+	$label-secondary
+);
+
+$label-success: () !default;
+$label-success: map-deep-merge(
+	(
+		background-color: var(--label-success-background-color, $white),
+		border-color: var(--label-success-border-color, $success-l1),
+		color: var(--label-success-color, $success),
+		href: (
+			hover: (
+				background-color:
+					var(--label-success-hover-background-color, $white),
+				border-color:
+					var(--label-success-hover-border-color, $success-l1),
+				color: var(--label-success-hover-color, $success-d2),
+			),
+		),
+	),
+	$label-success
+);
+
+$label-info: () !default;
+$label-info: map-deep-merge(
+	(
+		background-color: var(--label-info-background-color, $white),
+		border-color: var(--label-info-border-color, $info-l1),
+		color: var(--label-info-color, $info),
+		href: (
+			hover: (
+				background-color:
+					var(--label-info-hover-background-color, $white),
+				border-color: var(--label-info-hover-border-color, $info-l1),
+				color: var(--label-info-hover-color, $info-d2),
+			),
+		),
+	),
+	$label-info
+);
+
+$label-warning: () !default;
+$label-warning: map-deep-merge(
+	(
+		background-color: var(--label-warning-background-color, $white),
+		border-color: var(--label-warning-border-color, $warning-l1),
+		color: var(--label-warning-color, $warning),
+		href: (
+			hover: (
+				background-color:
+					var(--label-warning-hover-background-color, $white),
+				border-color:
+					var(--label-warning-hover-border-color, $warning-l1),
+				color: var(--label-warning-hover-color, $warning-d2),
+			),
+		),
+	),
+	$label-warning
+);
+
+$label-danger: () !default;
+$label-danger: map-deep-merge(
+	(
+		background-color: var(--label-danger-background-color, $white),
+		border-color: var(--label-danger-border-color, $danger-l1),
+		color: var(--label-danger-color, $danger),
+		href: (
+			hover: (
+				background-color:
+					var(--label-danger-hover-background-color, $white),
+				border-color: var(--label-danger-hover-border-color, $danger-l1),
+				color: var(--label-danger-hover-color, $danger-d2),
+			),
+		),
+	),
+	$label-danger
+);
+
+$label-light: () !default;
+$label-light: map-deep-merge(
+	(
+		background-color: var(--label-light-background-color, $dark),
+		border-color: var(--label-light-border-color, $light),
+		color: var(--label-light-color, $light),
+		href: (
+			hover: (
+				background-color:
+					var(--label-light-hover-background-color, $dark),
+				border-color: var(--label-light-hover-border-color, $light),
+				color: var(--label-light-hover-color, $light-d2),
+			),
+		),
+	),
+	$label-light
+);
+
+$label-dark: () !default;
+$label-dark: map-deep-merge(
+	(
+		background-color: var(--label-dark-background-color, $white),
+		border-color: var(--label-dark-border-color, $dark),
+		color: var(--label-dark-color, $dark),
+		href: (
+			hover: (
+				background-color:
+					var(--label-dark-hover-background-color, $white),
+				border-color: var(--label-dark-hover-border-color, $dark),
+				color: var(--label-dark-hover-color, $dark-l2),
+			),
+		),
+	),
+	$label-dark
+);
