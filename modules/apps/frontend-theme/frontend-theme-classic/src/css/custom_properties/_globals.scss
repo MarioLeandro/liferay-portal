@@ -1,0 +1,776 @@
+// Global Variables
+
+$clay-unset: clay-unset !default;
+
+// An alias for `$clay-unset`
+
+$c-unset: $clay-unset !default;
+
+$clay-unset-placeholder: clay-unset-placeholder !default;
+
+$enable-clay-color-functions-process-fallback: true !default;
+
+$enable-c-inner: true !default;
+$enable-lexicon-flat-colors: true !default;
+$enable-scaling-components: true !default;
+$scaling-breakpoint-down: sm !default;
+
+$enable-caret: false !default;
+$enable-deprecation-messages: true !default;
+$enable-gradients: false !default;
+$enable-grid-classes: true !default;
+$enable-pointer-cursor-for-buttons: true !default;
+$enable-prefers-reduced-motion-media-query: true !default;
+$enable-print-styles: true !default;
+$enable-responsive-font-sizes: false !default;
+$enable-rounded: true !default;
+$enable-shadows: true !default;
+$enable-transitions: true !default;
+$enable-validation-icons: true !default;
+
+// Deprecated, no longer affects any compiled CSS
+
+$enable-hover-media-query: false !default;
+
+// Theme Base Colors
+
+$white: var(--white, #fff) !default;
+$black: var(--black, #000) !default;
+
+$gray-100: var(--gray-100, #f7f8f9) !default;
+$gray-200: var(--gray-200, #f1f2f5) !default;
+$gray-300: var(--gray-300, #e7e7ed) !default;
+$gray-400: var(--gray-400, #cdced9) !default;
+$gray-500: var(--gray-500, #a7a9bc) !default;
+$gray-600: var(--gray-600, #6b6c7e) !default;
+$gray-700: var(--gray-700, #495057) !default;
+$gray-800: var(--gray-800, #393a4a) !default;
+$gray-900: var(--gray-900, #272833) !default;
+
+$blue-d4: var(--blue-d4, #004799) !default;
+$blue-d3: var(--blue-d3, #0053b3) !default;
+$blue-d2: var(--blue-d2, #005fcc) !default;
+$blue-d1: var(--blue-d1, #006be6) !default;
+$blue: var(--blue, #006eff) !default;
+$blue-l1: var(--blue-l1, #338fff) !default;
+$blue-l2: var(--blue-l2, #66abff) !default;
+$blue-l3: var(--blue-l3, #97c5ff) !default;
+$blue-l4: var(--blue-l4, #cce3ff) !default;
+$blue-l5: var(--blue-l5, #e5f1ff) !default;
+
+$indigo-d4: var(--indigo-d4, #0017e5) !default;
+$indigo-d3: var(--indigo-d3, #001aff) !default;
+$indigo-d2: var(--indigo-d2, #1a30ff) !default;
+$indigo-d1: var(--indigo-d1, #3347ff) !default;
+$indigo: var(--indigo, #4d5fff) !default;
+$indigo-l1: var(--indigo-l1, #808cff) !default;
+$indigo-l2: var(--indigo-l2, #99a3ff) !default;
+$indigo-l3: var(--indigo-l3, #b2baff) !default;
+$indigo-l4: var(--indigo-l4, #ccd1ff) !default;
+$indigo-l5: var(--indigo-l5, #e5e8ff) !default;
+
+$purple-d4: var(--purple-d4, #70c) !default;
+$purple-d3: var(--purple-d3, #8600e6) !default;
+$purple-d2: var(--purple-d2, #9500ff) !default;
+$purple-d1: var(--purple-d1, #9f1aff) !default;
+$purple: var(--purple, #a3f) !default;
+$purple-l1: var(--purple-l1, #bf66ff) !default;
+$purple-l2: var(--purple-l2, #ca80ff) !default;
+$purple-l3: var(--purple-l3, #d499ff) !default;
+$purple-l4: var(--purple-l4, #dfb3ff) !default;
+$purple-l5: var(--purple-l5, #f2e5ff) !default;
+
+$pink-d4: var(--pink-d4, #800048) !default;
+$pink-d3: var(--pink-d3, #990057) !default;
+$pink-d2: var(--pink-d2, #b30065) !default;
+$pink-d1: var(--pink-d1, #cc0074) !default;
+$pink: var(--pink, #e50082) !default;
+$pink-l1: var(--pink-l1, #ff4db2) !default;
+$pink-l2: var(--pink-l2, #ff80c8) !default;
+$pink-l3: var(--pink-l3, #ff99d3) !default;
+$pink-l4: var(--pink-l4, #ffb3de) !default;
+$pink-l5: var(--pink-l5, #ffe5f4) !default;
+
+$red-d4: var(--red-d4, #800000) !default;
+$red-d3: var(--red-d3, #900) !default;
+$red-d2: var(--red-d2, #b30000) !default;
+$red-d1: var(--red-d1, #c00) !default;
+$red: var(--red, #e60000) !default;
+$red-l1: var(--red-l1, #ff4d4d) !default;
+$red-l2: var(--red-l2, #f66) !default;
+$red-l3: var(--red-l3, #ff8080) !default;
+$red-l4: var(--red-l4, #f99) !default;
+$red-l5: var(--red-l5, #ffe5e5) !default;
+
+$orange-d4: var(--orange-d4, #662700) !default;
+$orange-d3: var(--orange-d3, #803100) !default;
+$orange-d2: var(--orange-d2, #993b00) !default;
+$orange-d1: var(--orange-d1, #b34400) !default;
+$orange: var(--orange, #cc4e00) !default;
+$orange-l1: var(--orange-l1, #ff6200) !default;
+$orange-l2: var(--orange-l2, #ff8133) !default;
+$orange-l3: var(--orange-l3, #ffa166) !default;
+$orange-l4: var(--orange-l4, #ffc099) !default;
+$orange-l5: var(--orange-l5, #fff0e5) !default;
+
+$yellow-d4: var(--yellow-d4, #997000) !default;
+$yellow-d3: var(--yellow-d3, #b38900) !default;
+$yellow-d2: var(--yellow-d2, #cc9600) !default;
+$yellow-d1: var(--yellow-d1, #e6a800) !default;
+$yellow: var(--yellow, #fb0) !default;
+$yellow-l1: var(--yellow-l1, #ffc933) !default;
+$yellow-l2: var(--yellow-l2, #ffd666) !default;
+$yellow-l3: var(--yellow-l3, #ffe499) !default;
+$yellow-l4: var(--yellow-l4, #fff1cc) !default;
+$yellow-l5: var(--yellow-l5, #fff8e5) !default;
+
+$green-d4: var(--green-d4, #162d06) !default;
+$green-d3: var(--green-d3, #22430a) !default;
+$green-d2: var(--green-d2, #2e590d) !default;
+$green-d1: var(--green-d1, #397010) !default;
+$green: var(--green, #458613) !default;
+$green-l1: var(--green-l1, #53a117) !default;
+$green-l2: var(--green-l2, #67c91d) !default;
+$green-l3: var(--green-l3, #81e236) !default;
+$green-l4: var(--green-l4, #9de963) !default;
+$green-l5: var(--green-l5, #f1fce9) !default;
+
+$teal-d4: var(--teal-d4, #092a25) !default;
+$teal-d3: var(--teal-d3, #0d3f37) !default;
+$teal-d2: var(--teal-d2, #125449) !default;
+$teal-d1: var(--teal-d1, #16695b) !default;
+$teal: var(--teal, #1b7e6e) !default;
+$teal-l1: var(--teal-l1, #24a892) !default;
+$teal-l2: var(--teal-l2, #42d7be) !default;
+$teal-l3: var(--teal-l3, #6ce0cc) !default;
+$teal-l4: var(--teal-l4, #96e9db) !default;
+$teal-l5: var(--teal-l5, #eafbf8) !default;
+
+$cyan-d4: var(--cyan-d4, #00334d) !default;
+$cyan-d3: var(--cyan-d3, #046) !default;
+$cyan-d2: var(--cyan-d2, #005580) !default;
+$cyan-d1: var(--cyan-d1, #069) !default;
+$cyan: var(--cyan, #0077b3) !default;
+$cyan-l1: var(--cyan-l1, #0099e6) !default;
+$cyan-l2: var(--cyan-l2, #3bf) !default;
+$cyan-l3: var(--cyan-l3, #6cf) !default;
+$cyan-l4: var(--cyan-l4, #9df) !default;
+$cyan-l5: var(--cyan-l5, #e5f6ff) !default;
+
+$primary: var(--primary, #0b5fff) !default;
+
+$primary-d1: var(--primary-d1, clay-darken($primary, 5.1)) !default;
+$primary-d2: var(--primary-d2, clay-darken($primary, 10)) !default;
+$primary-l0: var(--primary-l0, clay-lighten($primary, 14.9)) !default;
+$primary-l1: var(--primary-l1, clay-lighten($primary, 22.94)) !default;
+$primary-l2: var(--primary-l2, clay-lighten($primary, 32.94)) !default;
+$primary-l3: var(--primary-l3, clay-lighten($primary, 44.9)) !default;
+
+$secondary: var(--secondary, #6b6c7e) !default;
+
+$secondary-d1: var(
+	--secondary-d1,
+	clay-darken(clay-saturate($secondary, 4.82), 20)
+) !default;
+$secondary-d2: var(
+	--secondary-d2,
+	clay-darken(clay-saturate($secondary, 5.36), 23.92)
+) !default;
+$secondary-l0: var(
+	--secondary-l0,
+	clay-lighten(clay-saturate(clay-adjust-hue($secondary, 32), 1.25), 15.29)
+) !default;
+$secondary-l1: var(
+	--secondary-l1,
+	clay-lighten(clay-saturate(clay-adjust-hue($secondary, -3), 5.39), 23.92)
+) !default;
+$secondary-l2: var(
+	--secondary-l2,
+	clay-lighten(clay-saturate(clay-adjust-hue($secondary, -2), 5.48), 37.06)
+) !default;
+$secondary-l3: var(
+	--secondary-l3,
+	clay-lighten(clay-saturate(clay-adjust-hue($secondary, 3), 6.13), 46.08)
+) !default;
+
+$info: var(--info, #2e5aac) !default;
+
+$info-d1: var(--info-d1, clay-darken($info, 5)) !default;
+$info-d2: var(--info-d2, clay-darken($info, 10)) !default;
+$info-l1: var(
+	--info-l1,
+	clay-lighten(clay-saturate($info, 0.59), 28.04)
+) !default;
+$info-l2: var(
+	--info-l2,
+	clay-lighten(clay-desaturate($info, 3.25), 52.94)
+) !default;
+
+$success: var(--success, #287d3c) !default;
+
+$success-d1: var(--success-d1, clay-darken($success, 5)) !default;
+$success-d2: var(--success-d2, clay-darken($success, 10)) !default;
+$success-l1: var(
+	--success-l1,
+	clay-lighten(clay-desaturate($success, 0.14), 24.95)
+) !default;
+$success-l2: var(
+	--success-l2,
+	clay-lighten(clay-desaturate($success, 1.52), 62.94)
+) !default;
+
+$warning: var(--warning, #b95000) !default;
+
+$warning-d1: var(--warning-d1, clay-darken($warning, 5.1)) !default;
+$warning-d2: var(--warning-d2, clay-darken($warning, 10)) !default;
+$warning-l1: var(--warning-l1, clay-lighten($warning, 24.9)) !default;
+$warning-l2: var(--warning-l2, clay-lighten($warning, 60)) !default;
+
+$danger: var(--danger, #da1414) !default;
+
+$danger-d1: var(--danger-d1, clay-darken($danger, 5)) !default;
+$danger-d2: var(--danger-d2, clay-darken($danger, 10)) !default;
+$danger-l1: var(
+	--danger-l1,
+	clay-lighten(clay-desaturate($danger, 0.25), 28.04)
+) !default;
+$danger-l2: var(
+	--danger-l2,
+	clay-lighten(clay-saturate($danger, 5.04), 50)
+) !default;
+
+$light: var(--light, #f1f2f5) !default;
+
+$light-d1: var(--light-d1, clay-darken($light, 5.1)) !default;
+$light-d2: var(--light-d2, clay-darken($light, 10)) !default;
+$light-l1: var(
+	--light-l1,
+	clay-lighten(clay-desaturate(clay-adjust-hue($light, -15), 2.38), 1.96)
+) !default;
+$light-l2: var(
+	--light-l2,
+	clay-lighten(clay-desaturate(clay-adjust-hue($light, -225), 16.67), 4.71)
+) !default;
+
+$dark: var(--dark, #272833) !default;
+
+$dark-d1: var(--dark-d1, clay-darken($dark, 5.1)) !default;
+$dark-d2: var(--dark-d2, clay-darken($dark, 10)) !default;
+$dark-l1: var(
+	--dark-l1,
+	clay-lighten(clay-saturate($dark, 0.18), 4.12)
+) !default;
+$dark-l2: var(
+	--dark-l2,
+	clay-lighten(clay-desaturate($dark, 0.36), 8.04)
+) !default;
+
+$theme-colors: () !default;
+$theme-colors: map-merge(
+	(
+		'danger': $danger,
+		'dark': $dark,
+		'info': $info,
+		'light': $light,
+		'primary': $primary,
+		'secondary': $secondary,
+		'success': $success,
+		'warning': $warning,
+	),
+	$theme-colors
+);
+
+// Set a specific jump point for requesting color jumps
+
+$theme-color-interval: 8% !default;
+
+// The yiq lightness value that determines when the lightness of color changes from "dark" to "light". Acceptable values are between 0 and 255.
+
+$yiq-contrasted-threshold: 150 !default;
+
+$yiq-text-dark: $gray-900 !default;
+$yiq-text-light: $white !default;
+
+// Spacing
+
+$spacer: 1rem !default;
+$spacers: () !default;
+$spacers: map-deep-merge(
+	(
+		0: var(--spacer-0, 0),
+		1: var(--spacer-1, $spacer * 0.25),
+		2: var(--spacer-2, $spacer * 0.5),
+		3: var(--spacer-3, $spacer * 1),
+		4: var(--spacer-4, $spacer * 1.5),
+		5: var(--spacer-5, $spacer * 3),
+		6: var(--spacer-6, $spacer * 4.5),
+		7: var(--spacer-7, $spacer * 6),
+		8: var(--spacer-8, $spacer * 7.5),
+		9: var(--spacer-9, $spacer * 9),
+		10: var(--spacer-10, $spacer * 10),
+	),
+	$spacers
+);
+
+// This variable affects the `.h-*` and `.w-*` classes.
+
+$sizes: () !default;
+$sizes: map-merge(
+	(
+		100: 100%,
+		25: 25%,
+		50: 50%,
+		75: 75%,
+		auto: auto,
+	),
+	$sizes
+);
+
+// Reusable Values
+
+$line-height-lg: 1.5 !default;
+$line-height-sm: 1.5 !default;
+
+$line-height-base: 1.5 !default;
+
+$border-color: $gray-200 !default;
+$border-width: var(--border-width, 0.0625rem) !default;
+
+$border-radius: var(--border-radius, 0.25rem) !default;
+
+$border-radius-lg: var(--border-radius-lg, 0.375rem) !default;
+$border-radius-sm: var(--border-radius-sm, 0.1875rem) !default;
+
+$rounded-0-border-radius: 0 !default;
+$rounded-border-radius: var(--border-radius-rounded, $border-radius) !default;
+$rounded-circle-border-radius: var(--border-radius-circle, 5000px) !default;
+$rounded-pill: var(--rounded-pill, 50rem) !default;
+
+$box-shadow: var(
+	--box-shadow,
+	0 0.5rem 1rem unquote('rgb(from #{$black} r g b / 0.15)')
+) !default;
+
+$box-shadow-lg: var(
+	--box-shadow-lg,
+	0 1rem 3rem unquote('rgb(from #{$black} r g b / 0.175)')
+) !default;
+$box-shadow-sm: var(
+	--box-shadow-sm,
+	0 0.125rem 0.25rem unquote('rgb(from #{$black} r g b / 0.075)')
+) !default;
+
+$transition-base: var(--transition-base, all 0.2s ease-in-out) !default;
+$transition-collapse: var(--transition-collapse, height 0.35s ease) !default;
+$transition-fade: var(--transition-fade, opacity 0.15s linear) !default;
+
+$embed-responsive-aspect-ratios: () !default;
+$embed-responsive-aspect-ratios: join(
+	((21 9), (16 9), (4 3), (1 1)),
+	$embed-responsive-aspect-ratios
+);
+
+$component-transition: var(
+	--component-transition,
+	color 0.15s ease-in-out#{','} background-color 0.15s ease-in-out#{','}
+		border-color 0.15s ease-in-out#{','} box-shadow 0.15s ease-in-out
+) !default;
+
+$component-active-bg: var(--component-active-bg, $primary) !default;
+$component-active-color: var(--component-active-color, $white) !default;
+
+$component-focus-box-shadow: var(
+	--component-focus-box-shadow,
+	0 0 0 0.125rem $white#{','} 0 0 0 0.25rem $primary-l1
+) !default;
+$component-focus-inset-box-shadow: var(
+	--component-focus-inset-box-shadow,
+	inset 0 0 0 0.125rem $primary-l1#{','} inset 0 0 0 0.25rem $white
+) !default;
+
+$component-disabled-opacity: 0.4 !default;
+
+// Grid
+
+$grid-breakpoints: (
+	xs: 0,
+	sm: 576px,
+	md: 768px,
+	lg: 992px,
+	xl: 1280px,
+) !default;
+
+// Grid columns
+
+$grid-columns: 12 !default;
+$grid-gutter-width: 24px !default;
+$grid-row-columns: 6 !default;
+
+$container-max-widths: (
+	sm: var(--container-max-sm, 540px),
+	md: var(--container-max-md, 720px),
+	lg: var(--container-max-lg, 960px),
+	xl: var(--container-max-xl, 1248px),
+) !default;
+
+$container-form-lg: () !default;
+$container-form-lg: map-deep-merge(
+	(
+		breakpoint-up: lg,
+		padding-bottom-mobile: 1rem,
+		padding-bottom: 3rem,
+		padding-top-mobile: 1rem,
+		padding-top: 3rem,
+	),
+	$container-form-lg
+);
+
+$container-view: () !default;
+$container-view: map-deep-merge(
+	(
+		padding-bottom: 1.5rem,
+		padding-top: 1.5rem,
+	),
+	$container-view
+);
+
+$moz-osx-font-smoothing: grayscale !default;
+$webkit-font-smoothing: antialiased !default;
+
+$font-import-url: null !default;
+
+$font-family-monospace: var(
+	--font-family-monospace,
+	sfmono-regular,
+	menlo,
+	monaco,
+	consolas,
+	'Liberation Mono',
+	'Courier New',
+	monospace
+) !default;
+$font-family-sans-serif: var(
+	--font-family-sans-serif,
+	system-ui,
+	-apple-system,
+	blinkmacsystemfont,
+	'Segoe UI',
+	roboto,
+	oxygen-sans,
+	ubuntu,
+	cantarell,
+	'Helvetica Neue',
+	arial,
+	sans-serif,
+	'Apple Color Emoji',
+	'Segoe UI Emoji',
+	'Segoe UI Symbol'
+) !default;
+$font-family-serif: var(
+	--font-family-serif,
+	georgia,
+	'Times New Roman',
+	times,
+	serif
+) !default;
+
+$font-family-base: var(--font-family-base, $font-family-sans-serif) !default;
+
+$font-size-base: var(--font-size-base, 1rem) !default;
+
+$font-size-lg: var(--font-size-lg, 1.125rem) !default;
+$font-size-sm: var(--font-size-sm, 0.875rem) !default;
+
+$font-size-base-mobile: $font-size-base !default;
+$font-size-lg-mobile: $font-size-lg !default;
+
+$font-weight-bold: var(--font-weight-bold, 700) !default;
+$font-weight-bolder: var(--font-weight-bolder, 900) !default;
+$font-weight-light: var(--font-weight-light, 300) !default;
+$font-weight-lighter: var(--font-weight-lighter, lighter) !default;
+$font-weight-normal: var(--font-weight-normal, 400) !default;
+$font-weight-semi-bold: var(--font-weight-semi-bold, 600) !default;
+
+$font-weight-base: $font-weight-normal !default;
+
+$h1-font-size: var(--h1-font-size, 1.625rem) !default;
+$h2-font-size: var(--h2-font-size, 1.375rem) !default;
+$h3-font-size: var(--h3-font-size, 1.1875rem) !default;
+$h4-font-size: var(--h4-font-size, 1rem) !default;
+$h5-font-size: var(--h5-font-size, 0.875rem) !default;
+$h6-font-size: var(--h6-font-size, 0.8125rem) !default;
+
+$h1-font-size-mobile: null !default;
+$h2-font-size-mobile: null !default;
+$h3-font-size-mobile: null !default;
+$h4-font-size-mobile: null !default;
+$h5-font-size-mobile: null !default;
+$h6-font-size-mobile: null !default;
+
+$headings-color: var(--headings-color) !default;
+$headings-font-family: var(--headings-font-family) !default;
+$headings-font-weight: $font-weight-bold !default;
+$headings-line-height: 1.2 !default;
+$headings-margin-bottom: $spacer * 0.5 !default;
+
+// Body
+
+$body-bg: var(--body-bg, $white) !default;
+$body-color: var(--body-color, $dark-d1) !default;
+$body-moz-osx-font-smoothing: $moz-osx-font-smoothing !default;
+$body-text-align: inherit !default;
+$body-webkit-font-smoothing: $webkit-font-smoothing !default;
+
+$c-body: () !default;
+$c-body: map-merge(
+	(
+		-moz-osx-font-smoothing: $body-moz-osx-font-smoothing,
+		-ms-overflow-style: scrollbar,
+		-webkit-font-smoothing: $body-webkit-font-smoothing,
+		background-color: $body-bg,
+		color: $body-color,
+		font-family: $font-family-base,
+		font-size: var(--font-size-base, $font-size-base),
+		font-weight: $font-weight-base,
+		line-height: $line-height-base,
+		margin: 0,
+		text-align: $body-text-align
+	),
+	$c-body
+);
+
+// Link
+
+$link-color: var(--link-color, $primary) !default;
+$link-decoration: var(--link-decoration, none) !default;
+$link-hover-color: var(--link-hover-color, $primary-d2) !default;
+$link-hover-decoration: var(--link-hover-decoration, underline) !default;
+
+// Cursors
+
+$disabled-cursor: not-allowed !default;
+$link-cursor: pointer !default;
+
+// Darken percentage for links with `.text-*` class (e.g. `.text-success`)
+
+$emphasized-link-hover-darken-percentage: 15% !default;
+
+// Paragraph
+
+$paragraph-margin-bottom: 1rem !default;
+
+$display1-size: var(--display1-size, 6rem) !default;
+$display2-size: var(--display2-size, 5.5rem) !default;
+$display3-size: var(--display3-size, 4.5rem) !default;
+$display4-size: var(--display4-size, 3.5rem) !default;
+
+$display1-weight: var(--display1-weight, 300) !default;
+$display2-weight: var(--display2-weight, 300) !default;
+$display3-weight: var(--display3-weight, 300) !default;
+$display4-weight: var(--display4-weight, 300) !default;
+
+$display-line-height: var(
+	--display-line-height,
+	$headings-line-height
+) !default;
+
+$lead-font-size: var(--lead-font-size, 1.25rem) !default;
+$lead-font-weight: var(--lead-font-weight, 400) !default;
+
+$small-font-size: 0.875rem !default;
+
+$text-muted: var(--text-muted, $gray-500) !default;
+
+$blockquote-font-size: var(--blockquote-font-size, 1.25rem);
+
+$blockquote-small-color: var(--blockquote-small-color, $gray-600);
+$blockquote-small-font-size: var(
+	--blockquote-small-font-size,
+	$small-font-size
+);
+
+$hr-border-color: var(
+	--hr-border-color,
+	unquote('rgb(from #{$black} r g b / 0.1)')
+) !default;
+$hr-border-width: var(--hr-border-width, $border-width) !default;
+$hr-margin-y: var(--hr-margin-y, $spacer) !default;
+
+$mark-padding: 0.2em !default;
+
+$dt-font-weight: $font-weight-bold !default;
+
+$code-color: $pink !default;
+$code-font-size: 87.5% !default;
+
+$kbd-bg: $gray-900 !default;
+$kbd-box-shadow: inset 0 -0.1rem 0 unquote('rgb(from #{$black} r g b / 0.25)') !default;
+$kbd-color: $white !default;
+$kbd-font-size: $code-font-size !default;
+$kbd-padding-x: 0.4rem !default;
+$kbd-padding-y: 0.2rem !default;
+
+$nested-kbd-font-weight: $font-weight-bold !default;
+
+$pre-color: $gray-900 !default;
+$pre-scrollable-max-height: 340px !default;
+
+$list-inline-padding: 0.5rem !default;
+
+$mark-bg: #fcf8e3 !default;
+
+// Button
+
+$c-button-base: () !default;
+$c-button-base: map-merge(
+	(-webkit-appearance: button, cursor: $link-cursor),
+	$c-button-base
+);
+
+// Buttons + Forms
+
+$label-margin-bottom: 0.5rem !default;
+
+$input-btn-font-family: null !default;
+$input-btn-font-size: $font-size-base !default;
+$input-btn-line-height: $line-height-base !default;
+$input-btn-padding-x: 0.75rem !default;
+$input-btn-padding-y: 0.375rem !default;
+
+$input-btn-focus-width: 0.2rem !default;
+
+$input-btn-focus-color: unquote(
+	'rgb(from #{$component-active-bg} r g b / 0.25)'
+) !default;
+
+$input-btn-focus-box-shadow: 0 0 0 $input-btn-focus-width $input-btn-focus-color !default;
+
+$input-btn-font-size-sm: $font-size-sm !default;
+$input-btn-line-height-sm: $line-height-sm !default;
+$input-btn-padding-x-sm: 0.5rem !default;
+$input-btn-padding-y-sm: 0.25rem !default;
+
+$input-btn-font-size-lg: $font-size-lg !default;
+$input-btn-line-height-lg: $line-height-lg !default;
+$input-btn-padding-x-lg: 1rem !default;
+$input-btn-padding-y-lg: 0.5rem !default;
+
+$input-btn-border-width: $border-width !default;
+
+// Print
+
+$print-body-min-width: map-get($grid-breakpoints, 'lg') !default;
+$print-page-size: a3 !default;
+
+// Utilities
+
+$bg-theme-colors: () !default;
+$bg-theme-colors: map-deep-merge(
+	(
+		'danger': (
+			background-color: $danger !important,
+		),
+		'dark': (
+			background-color: $dark !important,
+		),
+		'gray-dark': (
+			background-color: $gray-800 !important,
+		),
+		'info': (
+			background-color: $info !important,
+		),
+		'light': (
+			background-color: $light !important,
+		),
+		'lighter': (
+			background-color: $gray-100 !important,
+		),
+		'primary': (
+			background-color: $primary !important,
+		),
+		'secondary': (
+			background-color: $secondary !important,
+		),
+		'success': (
+			background-color: $success !important,
+		),
+		'warning': (
+			background-color: $warning !important,
+		),
+	),
+	$bg-theme-colors
+);
+
+$border-theme-colors: () !default;
+$border-theme-colors: map-deep-merge(
+	(
+		'danger': (
+			border-color: $danger !important,
+		),
+		'dark': (
+			border-color: $dark !important,
+		),
+		'gray-dark': (
+			border-color: $gray-800 !important,
+		),
+		'info': (
+			border-color: $info !important,
+		),
+		'light': (
+			border-color: $light !important,
+		),
+		'lighter': (
+			border-color: $gray-100 !important,
+		),
+		'primary': (
+			border-color: $primary !important,
+		),
+		'secondary': (
+			border-color: $secondary !important,
+		),
+		'success': (
+			border-color: $success !important,
+		),
+		'warning': (
+			border-color: $warning !important,
+		),
+	),
+	$border-theme-colors
+);
+
+$text-theme-colors: () !default;
+$text-theme-colors: map-deep-merge(
+	(
+		'danger': (
+			color: $danger !important,
+		),
+		'dark': (
+			color: $dark !important,
+		),
+		'gray-dark': (
+			color: $gray-800 !important,
+		),
+		'info': (
+			color: $info !important,
+		),
+		'light': (
+			color: $light !important,
+		),
+		'lighter': (
+			color: $gray-100 !important,
+		),
+		'primary': (
+			color: $primary !important,
+		),
+		'secondary': (
+			color: $secondary !important,
+		),
+		'success': (
+			color: $success !important,
+		),
+		'warning': (
+			color: $warning !important,
+		),
+	),
+	$text-theme-colors
+);

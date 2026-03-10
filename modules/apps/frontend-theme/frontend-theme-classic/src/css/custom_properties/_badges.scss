@@ -1,0 +1,266 @@
+// .badge-primary
+
+$badge-primary-bg: $primary !default;
+$badge-primary-hover-bg: $badge-primary-bg !default;
+$badge-primary-border-color: null !default;
+$badge-primary-hover-border-color: null !default;
+$badge-primary-color: $white !default;
+$badge-primary-hover-color: $badge-primary-color !default;
+$badge-primary-link-color: null !default;
+$badge-primary-link-hover-color: null !default;
+
+$badge-primary: () !default;
+$badge-primary: map-deep-merge(
+	(
+		background-color:
+			var(--badge-primary-background-color, $badge-primary-bg),
+		border-color:
+			var(--badge-primary-border-color, $badge-primary-border-color),
+		color: var(--badge-primary-color, $badge-primary-color),
+	),
+	$badge-primary
+);
+
+// .badge-secondary
+
+$badge-secondary-bg: $secondary-l3 !default;
+$badge-secondary-hover-bg: $badge-secondary-bg !default;
+$badge-secondary-border-color: null !default;
+$badge-secondary-hover-border-color: null !default;
+$badge-secondary-color: $gray-900 !default;
+$badge-secondary-hover-color: $badge-secondary-color !default;
+$badge-secondary-link-color: $badge-secondary-color !default;
+$badge-secondary-link-hover-color: null !default;
+
+$badge-secondary: () !default;
+$badge-secondary: map-deep-merge(
+	(
+		background-color:
+			var(--badge-secondary-background-color, $badge-secondary-bg),
+		border-color:
+			var(--badge-secondary-border-color, $badge-secondary-border-color),
+		color: var(--badge-secondary-color, $badge-secondary-color),
+	),
+	$badge-secondary
+);
+
+// .badge-success
+
+$badge-success-bg: $success !default;
+$badge-success-hover-bg: $badge-success-bg !default;
+$badge-success-border-color: null !default;
+$badge-success-hover-border-color: null !default;
+$badge-success-color: $white !default;
+$badge-success-hover-color: $badge-success-color !default;
+$badge-success-link-color: null !default;
+$badge-success-link-hover-color: null !default;
+
+$badge-success: () !default;
+$badge-success: map-deep-merge(
+	(
+		background-color: $badge-success-bg,
+		border-color: $badge-success-border-color,
+		color: $badge-success-color,
+	),
+	$badge-success
+);
+
+// .badge-info
+
+$badge-info-bg: $info !default;
+$badge-info-hover-bg: $badge-info-bg !default;
+$badge-info-border-color: null !default;
+$badge-info-hover-border-color: null !default;
+$badge-info-color: $white !default;
+$badge-info-hover-color: $badge-info-color !default;
+$badge-info-link-color: null !default;
+$badge-info-link-hover-color: null !default;
+
+$badge-info: () !default;
+$badge-info: map-deep-merge(
+	(
+		background-color: $badge-info-bg,
+		border-color: $badge-info-border-color,
+		color: $badge-info-color,
+	),
+	$badge-info
+);
+
+// .badge-warning
+
+$badge-warning-bg: $warning !default;
+$badge-warning-hover-bg: $badge-warning-bg !default;
+$badge-warning-border-color: null !default;
+$badge-warning-hover-border-color: null !default;
+$badge-warning-color: $white !default;
+$badge-warning-hover-color: $badge-warning-color !default;
+$badge-warning-link-color: null !default;
+$badge-warning-link-hover-color: null !default;
+
+$badge-warning: () !default;
+$badge-warning: map-deep-merge(
+	(
+		background-color: $badge-warning-bg,
+		border-color: $badge-warning-border-color,
+		color: $badge-warning-color,
+	),
+	$badge-warning
+);
+
+// .badge-danger
+
+$badge-danger-bg: $danger !default;
+$badge-danger-hover-bg: $badge-danger-bg !default;
+$badge-danger-border-color: null !default;
+$badge-danger-hover-border-color: null !default;
+$badge-danger-color: $white !default;
+$badge-danger-hover-color: $badge-danger-color !default;
+$badge-danger-link-color: null !default;
+$badge-danger-link-hover-color: null !default;
+
+$badge-danger: () !default;
+$badge-danger: map-deep-merge(
+	(
+		background-color: $badge-danger-bg,
+		border-color: $badge-danger-border-color,
+		color: $badge-danger-color,
+	),
+	$badge-danger
+);
+
+// .badge-light
+
+$badge-light-bg: $light !default;
+$badge-light-hover-bg: $badge-light-bg !default;
+$badge-light-border-color: null !default;
+$badge-light-hover-border-color: null !default;
+$badge-light-color: $gray-900 !default;
+$badge-light-hover-color: $badge-light-color !default;
+$badge-light-link-color: $badge-light-color !default;
+$badge-light-link-hover-color: null !default;
+
+$badge-light: () !default;
+$badge-light: map-deep-merge(
+	(
+		background-color: $badge-light-bg,
+		border-color: $badge-light-border-color,
+		color: $badge-light-color,
+	),
+	$badge-light
+);
+
+// .badge-dark
+
+$badge-dark-bg: $dark !default;
+$badge-dark-hover-bg: $badge-dark-bg !default;
+$badge-dark-border-color: null !default;
+$badge-dark-hover-border-color: null !default;
+$badge-dark-color: $white !default;
+$badge-dark-hover-color: $badge-dark-color !default;
+$badge-dark-link-color: null !default;
+$badge-dark-link-hover-color: null !default;
+
+$badge-dark: () !default;
+$badge-dark: map-deep-merge(
+	(
+		background-color: $badge-dark-bg,
+		border-color: $badge-dark-border-color,
+		color: $badge-dark-color,
+	),
+	$badge-dark
+);
+
+$badge-palette: () !default;
+$badge-palette: map-deep-merge(
+	(
+		primary: $badge-primary,
+		secondary: $badge-secondary,
+		success: $badge-success,
+		info: $badge-info,
+		warning: $badge-warning,
+		danger: $badge-danger,
+		light: $badge-light,
+		dark: $badge-dark,
+		'.badge-translucent.badge-primary': (
+			background-color: unquote('rgb(from #{$primary-d1} r g b / 0.04)'),
+			border-color: transparent,
+			color: $primary-d1,
+		),
+		'.badge-translucent.badge-info, .badge-beta': (
+			background-color: unquote('rgb(from #{$info-d1} r g b / 0.04)'),
+			border-color: transparent,
+			color: $info-d1,
+		),
+		'.badge-translucent.badge-success': (
+			background-color: unquote('rgb(from #{$success-d1} r g b / 0.04)'),
+			border-color: transparent,
+			color: $success-d1,
+		),
+		'.badge-translucent.badge-warning': (
+			background-color: unquote('rgb(from #{$warning-d1} r g b / 0.04)'),
+			border-color: transparent,
+			color: $warning-d1,
+		),
+		'.badge-translucent.badge-danger': (
+			background-color: unquote('rgb(from #{$danger-d1} r g b / 0.04)'),
+			border-color: transparent,
+			color: $danger-d1,
+		),
+		'%clay-dark-badge-translucent-primary': (
+			background-color: unquote('rgb(from #{$primary-l2} r g b / 0.04)'),
+			border-color: transparent,
+			color: $primary-l1,
+		),
+		'.clay-dark .badge-translucent.badge-primary': (
+			extend: '%clay-dark-badge-translucent-primary',
+		),
+		'.clay-dark.badge-translucent.badge-primary': (
+			extend: '%clay-dark-badge-translucent-primary',
+		),
+		'%clay-dark-badge-translucent-info': (
+			background-color: unquote('rgb(from #{$info-l2} r g b / 0.04)'),
+			border-color: transparent,
+			color: $info-l1,
+		),
+		'.clay-dark .badge-translucent.badge-info, .badge-beta-dark': (
+			extend: '%clay-dark-badge-translucent-info',
+		),
+		'.clay-dark.badge-translucent.badge-info': (
+			extend: '%clay-dark-badge-translucent-info',
+		),
+		'%clay-dark-badge-translucent-success': (
+			background-color: unquote('rgb(from #{$success-l2} r g b / 0.04)'),
+			border-color: transparent,
+			color: $success-l1,
+		),
+		'.clay-dark .badge-translucent.badge-success': (
+			extend: '%clay-dark-badge-translucent-success',
+		),
+		'.clay-dark.badge-translucent.badge-success': (
+			extend: '%clay-dark-badge-translucent-success',
+		),
+		'%clay-dark-badge-translucent-warning': (
+			background-color: unquote('rgb(from #{$warning-l2} r g b / 0.04)'),
+			border-color: transparent,
+			color: $warning-l1,
+		),
+		'.clay-dark .badge-translucent.badge-warning': (
+			extend: '%clay-dark-badge-translucent-warning',
+		),
+		'.clay-dark.badge-translucent.badge-warning': (
+			extend: '%clay-dark-badge-translucent-warning',
+		),
+		'%clay-dark-badge-translucent-danger': (
+			background-color: unquote('rgb(from #{$danger-l2} r g b / 0.04)'),
+			border-color: transparent,
+			color: $danger-l1,
+		),
+		'.clay-dark .badge-translucent.badge-danger': (
+			extend: '%clay-dark-badge-translucent-danger',
+		),
+		'.clay-dark.badge-translucent.badge-danger': (
+			extend: '%clay-dark-badge-translucent-danger',
+		),
+	),
+	$badge-palette
+);
