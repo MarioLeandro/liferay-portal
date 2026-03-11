@@ -34,6 +34,8 @@ export default function AllSpacesFDSPropsTransformer({
 	itemsActions?: any[];
 	otherProps: any;
 }) {
+	console.log(otherProps);
+
 	return {
 		...otherProps,
 		creationMenu: {
