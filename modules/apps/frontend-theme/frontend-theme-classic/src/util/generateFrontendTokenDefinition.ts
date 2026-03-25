@@ -34,37 +34,52 @@ const CATEGORY_MAP: Record<string, {category: string; setLabel?: string}> = {
 	'box-shadow-': {category: 'general', setLabel: 'box-shadows'},
 	'brand-': {category: 'colorSystem', setLabel: 'brand-colors'},
 	'btn-': {category: 'buttons'},
-	'danger': {category: 'colorSystem'},
+	'danger': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'dark': {category: 'colorSystem', setLabel: 'theme-colors'},
 	'display-': {category: 'typography', setLabel: 'displays'},
 	'font-': {category: 'typography', setLabel: 'font-family'},
 	'gray-': {category: 'colorSystem', setLabel: 'grays'},
+	'gray-dark': {category: 'colorSystem', setLabel: 'theme-colors'},
 	'h1-': {category: 'typography', setLabel: 'headings'},
 	'h2-': {category: 'typography', setLabel: 'headings'},
 	'h3-': {category: 'typography', setLabel: 'headings'},
 	'h4-': {category: 'typography', setLabel: 'headings'},
 	'h5-': {category: 'typography', setLabel: 'headings'},
 	'h6-': {category: 'typography', setLabel: 'headings'},
-	'info': {category: 'colorSystem'},
-	'primary': {category: 'colorSystem'},
-	'spacer-': {category: 'spacing'},
-	'success': {category: 'colorSystem'},
-	'warning': {category: 'colorSystem'},
+	'info': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'light': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'primary': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'secondary': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'spacer-': {category: 'spacing', setLabel: 'spacing'},
+	'success': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'warning': {category: 'colorSystem', setLabel: 'theme-colors'},
+	'white': {category: 'colorSystem', setLabel: 'grays'},
+	'black': {category: 'colorSystem', setLabel: 'grays'},
 };
 
+/**
+ * Recursively strips var(--name, fallback) to get the final literal value.
+ */
 function formatDefaultValue(value: string, isColor: boolean): string {
 	if (!value) {
 		return '';
 	}
 	let cleanValue = value.trim();
 
-	if (cleanValue.indexOf('var(') !== -1) {
+	while (cleanValue.includes('var(')) {
 		const firstCommaIndex = cleanValue.indexOf(',');
-		if (firstCommaIndex !== -1) {
-			cleanValue = cleanValue
-				.substring(firstCommaIndex + 1)
-				.replace(/\s*\)$/, '')
-				.trim();
+		if (firstCommaIndex === -1) {
+			const match = cleanValue.match(/^var\(\s*(--[a-zA-Z0-9-]+)\s*\)$/);
+			if (match) {
+				cleanValue = match[1];
+			}
+			break;
 		}
+
+		const lastParenIndex = cleanValue.lastIndexOf(')');
+		cleanValue = cleanValue
+			.substring(firstCommaIndex + 1, lastParenIndex)
+			.trim();
 	}
 
 	cleanValue = cleanValue
@@ -173,9 +188,17 @@ function organizeIntoGroups(tokenList: TokenDefinition[]) {
 			tokenName += 'Color';
 		}
 
+		let editorType = 'String';
+		if (isActuallyColor) {
+			editorType = 'ColorPicker';
+		}
+		else if (/px|rem|em|%|vh|vw/.test(finalValue)) {
+			editorType = 'Length';
+		}
+
 		categoriesMap[category].sets[set].tokens.push({
 			defaultValue: finalValue,
-			editorType: isActuallyColor ? 'ColorPicker' : 'Length',
+			editorType,
 			label: tokenLabel,
 			mappings: [{type: 'cssVariable', value: tokenId}],
 			name: tokenName,
@@ -312,29 +335,19 @@ function generateTokens(): void {
 		}
 
 		fs.writeFileSync(
-			path.join(webInfDir, 'reflectorScss.txt'),
-			reflectorScss,
-			'utf-8'
-		);
-		fs.writeFileSync(
-			path.join(webInfDir, 'tokens.txt'),
-			JSON.stringify(tokenList, null, 2),
-			'utf-8'
-		);
-		fs.writeFileSync(
 			path.join(webInfDir, 'frontend-token-definition.json'),
 			JSON.stringify(output, null, 2),
 			'utf-8'
 		);
 
 		console.log(
-			'\x1b[32m✔ Finished: ' +
+			'\x1b[32m:heavy_check_mark: Finished: ' +
 				tokenList.length +
 				' tokens generated.\x1b[0m'
 		);
 	}
 	catch (error: any) {
-		console.error('❌ Erro:', error.message);
+		console.error(':x: Erro:', error.message);
 	}
 }
 
