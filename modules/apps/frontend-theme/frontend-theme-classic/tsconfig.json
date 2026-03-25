@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"downlevelIteration": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"module": "esnext",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"target": "es2017",
+		"types": ["node"]
+	},
+	"include": ["../../global.d.ts", "**/*.ts"]
+}

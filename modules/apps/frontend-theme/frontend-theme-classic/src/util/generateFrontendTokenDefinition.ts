@@ -1,0 +1,341 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import fs from 'fs';
+import path from 'path';
+import scss from 'postcss-scss';
+import * as sass from 'sass';
+import tinycolor from 'tinycolor2';
+import {fileURLToPath} from 'url';
+
+interface TokenDefinition {
+	fullId: string;
+	defaultValue: string;
+	category: string;
+	set: string;
+	tokenId: string;
+	tokenLabel: string;
+	[key: string]: any;
+}
+
+interface VarPair {
+	sass: string;
+	css: string;
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const CATEGORY_MAP: Record<string, {category: string; setLabel?: string}> = {
+	'body-': {category: 'general', setLabel: 'body'},
+	'border-': {category: 'general', setLabel: 'borders'},
+	'box-shadow-': {category: 'general', setLabel: 'box-shadows'},
+	'brand-': {category: 'colorSystem', setLabel: 'brand-colors'},
+	'btn-': {category: 'buttons'},
+	'danger': {category: 'colorSystem'},
+	'display-': {category: 'typography', setLabel: 'displays'},
+	'font-': {category: 'typography', setLabel: 'font-family'},
+	'gray-': {category: 'colorSystem', setLabel: 'grays'},
+	'h1-': {category: 'typography', setLabel: 'headings'},
+	'h2-': {category: 'typography', setLabel: 'headings'},
+	'h3-': {category: 'typography', setLabel: 'headings'},
+	'h4-': {category: 'typography', setLabel: 'headings'},
+	'h5-': {category: 'typography', setLabel: 'headings'},
+	'h6-': {category: 'typography', setLabel: 'headings'},
+	'info': {category: 'colorSystem'},
+	'primary': {category: 'colorSystem'},
+	'spacer-': {category: 'spacing'},
+	'success': {category: 'colorSystem'},
+	'warning': {category: 'colorSystem'},
+};
+
+function formatDefaultValue(value: string, isColor: boolean): string {
+	if (!value) {
+		return '';
+	}
+	let cleanValue = value.trim();
+
+	if (cleanValue.indexOf('var(') !== -1) {
+		const firstCommaIndex = cleanValue.indexOf(',');
+		if (firstCommaIndex !== -1) {
+			cleanValue = cleanValue
+				.substring(firstCommaIndex + 1)
+				.replace(/\s*\)$/, '')
+				.trim();
+		}
+	}
+
+	cleanValue = cleanValue
+		.replace(/['"]/g, '')
+		.replace(/%23/g, '#')
+		.replace(/%20/g, ' ');
+
+	if (isColor) {
+		const color = tinycolor(cleanValue);
+		if (color.isValid()) {
+			return color.toHexString().toLowerCase();
+		}
+	}
+
+	return cleanValue;
+}
+
+function toKebabCase(str: string): string {
+	return str.replace(/([a-z0-0])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+function toCamelCase(str: string): string {
+	return str.replace(/[-_](.)/g, function (match, group1) {
+		return group1.toUpperCase();
+	});
+}
+
+function parseTokenHierarchy(cssVarName: string) {
+	const cleanName = cssVarName.replace(/^--|--$/g, '').trim();
+	let category = 'general';
+	let customSetLabel = '';
+
+	for (const prefix in CATEGORY_MAP) {
+		if (cleanName.indexOf(prefix) === 0) {
+			category = CATEGORY_MAP[prefix].category;
+			customSetLabel = CATEGORY_MAP[prefix].setLabel || '';
+			break;
+		}
+	}
+
+	const parts = cleanName.split('-');
+	let set = customSetLabel;
+
+	if (!set) {
+		set = parts[0];
+		if (
+			parts.length > 1 &&
+			['btn', 'container', 'input', 'alert'].includes(parts[0])
+		) {
+			set = parts[0] + '-' + parts[1];
+		}
+	}
+
+	return {
+		category,
+		set,
+		tokenId: cleanName,
+		tokenLabel: cleanName,
+	};
+}
+
+function organizeIntoGroups(tokenList: TokenDefinition[]) {
+	const categoriesMap: Record<string, any> = {};
+
+	tokenList.sort(function (a, b) {
+		return a.tokenLabel.localeCompare(b.tokenLabel);
+	});
+
+	tokenList.forEach(function (token) {
+		const category = token.category;
+		const defaultValue = token.defaultValue;
+		const set = token.set;
+		const tokenId = token.tokenId;
+		const tokenLabel = token.tokenLabel;
+
+		if (!categoriesMap[category]) {
+			categoriesMap[category] = {
+				label: toKebabCase(category),
+				name: category,
+				sets: {},
+			};
+		}
+
+		if (!categoriesMap[category].sets[set]) {
+			categoriesMap[category].sets[set] = {
+				label: set,
+				name: toCamelCase(set),
+				tokens: [],
+			};
+		}
+
+		const isColorCandidate =
+			category === 'colorSystem' ||
+			/color|bg|background|border-color/.test(tokenId.toLowerCase()) ||
+			(defaultValue &&
+				(defaultValue.indexOf('#') !== -1 ||
+					defaultValue.indexOf('rgb') !== -1));
+
+		const finalValue = formatDefaultValue(defaultValue, !!isColorCandidate);
+
+		const isActuallyColor =
+			!!isColorCandidate && tinycolor(finalValue).isValid();
+
+		let tokenName = toCamelCase(tokenId);
+		if (isActuallyColor && !tokenName.toLowerCase().endsWith('color')) {
+			tokenName += 'Color';
+		}
+
+		categoriesMap[category].sets[set].tokens.push({
+			defaultValue: finalValue,
+			editorType: isActuallyColor ? 'ColorPicker' : 'Length',
+			label: tokenLabel,
+			mappings: [{type: 'cssVariable', value: tokenId}],
+			name: tokenName,
+			type: 'String',
+		});
+	});
+
+	const sortedCategories = Object.values(categoriesMap).sort(function (a, b) {
+		return a.label.localeCompare(b.label);
+	});
+
+	return sortedCategories.map(function (cat) {
+		const sortedSets = Object.values(cat.sets).sort(function (
+			a: any,
+			b: any
+		) {
+			return a.label.localeCompare(b.label);
+		});
+
+		return {
+			frontendTokenSets: sortedSets.map(function (set: any) {
+				return {
+					frontendTokens: set.tokens,
+					label: set.label,
+					name: set.name,
+				};
+			}),
+			label: cat.label,
+			name: cat.name,
+		};
+	});
+}
+
+function generateTokens(): void {
+	const srcCssDir = path.resolve(__dirname, '..', 'css', 'custom_properties');
+	const buildDir = path.resolve(__dirname, '..', '..', 'build', 'css');
+	const mainScss = path.resolve(buildDir, 'main.scss');
+
+	const varPairs: VarPair[] = [];
+
+	const findExposedVarsRegex =
+		/\$([a-z0-9-_]+)\s*:\s*var\s*\(\s*--([a-z0-9-_]+)/gi;
+
+	const files = fs.readdirSync(srcCssDir).filter(function (f) {
+		return f.endsWith('.scss');
+	});
+
+	files.forEach(function (file) {
+		const content = fs.readFileSync(path.join(srcCssDir, file), 'utf8');
+		let match;
+		while ((match = findExposedVarsRegex.exec(content)) !== null) {
+			const sName = match[1];
+			const cName = match[2];
+
+			const exists = varPairs.some(function (v) {
+				return v.sass === sName;
+			});
+			if (!exists) {
+				varPairs.push({sass: sName, css: cName});
+			}
+		}
+	});
+
+	let rootContent = '';
+	varPairs.forEach(function (pair) {
+		rootContent +=
+			'\n' +
+			"  @if global-variable-exists('" +
+			pair.sass +
+			"') {\n" +
+			'    $temp-val: $' +
+			pair.sass +
+			';\n' +
+			'    $type: type-of($temp-val);\n' +
+			"    @if $type == 'color' or $type == 'number' or $type == 'string' {\n" +
+			'        --' +
+			pair.css +
+			': #{$temp-val};\n' +
+			'    }\n' +
+			'  }\n';
+	});
+
+	const reflectorScss =
+		"@import 'clay/functions/global-functions';\n" +
+		"@import '" +
+		mainScss.replace(/\\/g, '/') +
+		"';\n\n" +
+		':root { ' +
+		rootContent +
+		' }';
+
+	try {
+		const result = sass.compileString(reflectorScss, {
+			loadPaths: [
+				buildDir,
+				path.dirname(mainScss),
+				path.resolve(__dirname, '../../node_modules'),
+			],
+			syntax: 'scss',
+		});
+
+		const root = scss.parse(result.css);
+		const tokenList: TokenDefinition[] = [];
+
+		root.walkDecls(function (decl) {
+			if (decl.prop.indexOf('--') === 0) {
+				const fullId = decl.prop.replace('--', '');
+				const rawValue = decl.value.trim();
+
+				const hierarchy = parseTokenHierarchy(fullId);
+
+				if (
+					!tokenList.some(function (t) {
+						return t.fullId === fullId;
+					})
+				) {
+					tokenList.push({
+						fullId,
+						defaultValue: rawValue,
+						category: hierarchy.category,
+						set: hierarchy.set,
+						tokenId: hierarchy.tokenId,
+						tokenLabel: hierarchy.tokenLabel,
+					});
+				}
+			}
+		});
+
+		const output = {frontendTokenCategories: organizeIntoGroups(tokenList)};
+		const webInfDir = path.resolve(__dirname, '..', 'WEB-INF');
+
+		if (!fs.existsSync(webInfDir)) {
+			fs.mkdirSync(webInfDir);
+		}
+
+		fs.writeFileSync(
+			path.join(webInfDir, 'reflectorScss.txt'),
+			reflectorScss,
+			'utf-8'
+		);
+		fs.writeFileSync(
+			path.join(webInfDir, 'tokens.txt'),
+			JSON.stringify(tokenList, null, 2),
+			'utf-8'
+		);
+		fs.writeFileSync(
+			path.join(webInfDir, 'frontend-token-definition.json'),
+			JSON.stringify(output, null, 2),
+			'utf-8'
+		);
+
+		console.log(
+			'\x1b[32m✔ Finished: ' +
+				tokenList.length +
+				' tokens generated.\x1b[0m'
+		);
+	}
+	catch (error: any) {
+		console.error('❌ Erro:', error.message);
+	}
+}
+
+generateTokens();

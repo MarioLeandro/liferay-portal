@@ -238,6 +238,32 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "#5ACA75",
+							"editorType": "ColorPicker",
+							"label": "success-l1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "success-l1"
+								}
+							],
+							"name": "successL1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#EDF9F0",
+							"editorType": "ColorPicker",
+							"label": "success-l2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "success-l2"
+								}
+							],
+							"name": "successL2Color",
+							"type": "String"
+						},
+						{
 							"defaultValue": "#287d3c",
 							"editorType": "ColorPicker",
 							"label": "success",
@@ -248,6 +274,58 @@
 								}
 							],
 							"name": "successColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#226A33",
+							"editorType": "ColorPicker",
+							"label": "success-d1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "success-d1"
+								}
+							],
+							"name": "successD1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#1C5629",
+							"editorType": "ColorPicker",
+							"label": "success-d2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "success-d2"
+								}
+							],
+							"name": "successD2Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#89A7E0",
+							"editorType": "ColorPicker",
+							"label": "info-l1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "info-l1"
+								}
+							],
+							"name": "infoL1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#EEF2FA",
+							"editorType": "ColorPicker",
+							"label": "info-l2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "info-l2"
+								}
+							],
+							"name": "infoL2Color",
 							"type": "String"
 						},
 						{
@@ -264,6 +342,58 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "#294F98",
+							"editorType": "ColorPicker",
+							"label": "info-d1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "info-d1"
+								}
+							],
+							"name": "infoD1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#234584",
+							"editorType": "ColorPicker",
+							"label": "info-d2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "info-d2"
+								}
+							],
+							"name": "infoD2Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#FF8F39",
+							"editorType": "ColorPicker",
+							"label": "warning-l1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "warning-l1"
+								}
+							],
+							"name": "warningL1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#FFF4EC",
+							"editorType": "ColorPicker",
+							"label": "warning-l2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "warning-l2"
+								}
+							],
+							"name": "warningL2Color",
+							"type": "String"
+						},
+						{
 							"defaultValue": "#b95000",
 							"editorType": "ColorPicker",
 							"label": "warning",
@@ -277,6 +407,58 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "#9F4500",
+							"editorType": "ColorPicker",
+							"label": "warning-d1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "warning-d1"
+								}
+							],
+							"name": "warningD1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#863A00",
+							"editorType": "ColorPicker",
+							"label": "warning-d2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "warning-d2"
+								}
+							],
+							"name": "warningD2Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#F48989",
+							"editorType": "ColorPicker",
+							"label": "danger-l1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "danger-l1"
+								}
+							],
+							"name": "dangerL1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#FEEFEF",
+							"editorType": "ColorPicker",
+							"label": "danger-l2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "danger-l2"
+								}
+							],
+							"name": "dangerL2Color",
+							"type": "String"
+						},
+						{
 							"defaultValue": "#da1414",
 							"editorType": "ColorPicker",
 							"label": "danger",
@@ -287,6 +469,32 @@
 								}
 							],
 							"name": "dangerColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#C31212",
+							"editorType": "ColorPicker",
+							"label": "danger-d1",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "danger-d1"
+								}
+							],
+							"name": "dangerD1Color",
+							"type": "String"
+						},
+						{
+							"defaultValue": "#AB1010",
+							"editorType": "ColorPicker",
+							"label": "danger-d2",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "danger-d2"
+								}
+							],
+							"name": "dangerD2Color",
 							"type": "String"
 						},
 						{
