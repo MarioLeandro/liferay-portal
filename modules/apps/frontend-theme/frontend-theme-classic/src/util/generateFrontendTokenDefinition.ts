@@ -232,123 +232,248 @@ function organizeIntoGroups(tokenList: TokenDefinition[]) {
 	});
 }
 
-function generateTokens(): void {
-	const srcCssDir = path.resolve(__dirname, '..', 'css', 'custom_properties');
-	const buildDir = path.resolve(__dirname, '..', '..', 'build', 'css');
-	const mainScss = path.resolve(buildDir, 'main.scss');
+function createTemporaryRootMap(varPairs: VarPair[], srcCssDir: string) {
 
-	const varPairs: VarPair[] = [];
+	// Geramos o conteúdo do :root automaticamente baseado no scraping
 
-	const findExposedVarsRegex =
-		/\$([a-z0-9-_]+)\s*:\s*var\s*\(\s*--([a-z0-9-_]+)/gi;
+	const rootEntries = varPairs
+		.map((p) => `  --${p.css}: #{$${p.sass}};`)
+		.join('\n');
 
-	const files = fs.readdirSync(srcCssDir).filter(function (f) {
-		return f.endsWith('.scss');
-	});
+	const content = `:root {\n${rootEntries}\n}`;
 
-	files.forEach(function (file) {
-		const content = fs.readFileSync(path.join(srcCssDir, file), 'utf8');
-		let match;
-		while ((match = findExposedVarsRegex.exec(content)) !== null) {
-			const sName = match[1];
-			const cName = match[2];
+	// Salvamos na pasta de CSS para que o build do Liferay o veja
 
-			const exists = varPairs.some(function (v) {
-				return v.sass === sName;
-			});
-			if (!exists) {
-				varPairs.push({sass: sName, css: cName});
-			}
-		}
-	});
-
-	let rootContent = '';
-	varPairs.forEach(function (pair) {
-		rootContent +=
-			'\n' +
-			"  @if global-variable-exists('" +
-			pair.sass +
-			"') {\n" +
-			'    $temp-val: $' +
-			pair.sass +
-			';\n' +
-			'    $type: type-of($temp-val);\n' +
-			"    @if $type == 'color' or $type == 'number' or $type == 'string' {\n" +
-			'        --' +
-			pair.css +
-			': #{$temp-val};\n' +
-			'    }\n' +
-			'  }\n';
-	});
-
-	const reflectorScss =
-		"@import 'clay/functions/global-functions';\n" +
-		"@import '" +
-		mainScss.replace(/\\/g, '/') +
-		"';\n\n" +
-		':root { ' +
-		rootContent +
-		' }';
-
-	try {
-		const result = sass.compileString(reflectorScss, {
-			loadPaths: [
-				buildDir,
-				path.dirname(mainScss),
-				path.resolve(__dirname, '../../node_modules'),
-			],
-			syntax: 'scss',
-		});
-
-		const root = scss.parse(result.css);
-		const tokenList: TokenDefinition[] = [];
-
-		root.walkDecls(function (decl) {
-			if (decl.prop.indexOf('--') === 0) {
-				const fullId = decl.prop.replace('--', '');
-				const rawValue = decl.value.trim();
-
-				const hierarchy = parseTokenHierarchy(fullId);
-
-				if (
-					!tokenList.some(function (t) {
-						return t.fullId === fullId;
-					})
-				) {
-					tokenList.push({
-						fullId,
-						defaultValue: rawValue,
-						category: hierarchy.category,
-						set: hierarchy.set,
-						tokenId: hierarchy.tokenId,
-						tokenLabel: hierarchy.tokenLabel,
-					});
-				}
-			}
-		});
-
-		const output = {frontendTokenCategories: organizeIntoGroups(tokenList)};
-		const webInfDir = path.resolve(__dirname, '..', 'WEB-INF');
-
-		if (!fs.existsSync(webInfDir)) {
-			fs.mkdirSync(webInfDir);
-		}
-
-		fs.writeFileSync(
-			path.join(webInfDir, 'frontend-token-definition.json'),
-			JSON.stringify(output, null, 2),
-			'utf-8'
-		);
-
-		console.log(
-			'\x1b[32m:heavy_check_mark: Finished: ' +
-				tokenList.length +
-				' tokens generated.\x1b[0m'
-		);
-	}
-	catch (error: any) {
-		console.error(':x: Erro:', error.message);
-	}
+	fs.writeFileSync(
+		path.resolve(srcCssDir, '_generated-root-map.scss'),
+		content
+	);
 }
 
-generateTokens();
+function cleanLiferayValue(rawValue: string): string {
+	if (!rawValue) {
+		return '';
+	}
+
+	let value = rawValue.trim();
+
+	// Se o valor contiver var(), extraímos o fallback (o que vem após a vírgula)
+	// Ex: var(--alert-font-size, 0.875rem) -> 0.875rem
+
+	if (value.includes('var(')) {
+		const lastCommaIndex = value.lastIndexOf(',');
+		if (lastCommaIndex !== -1) {
+			value = value
+				.substring(lastCommaIndex + 1)
+				.replace(/\)+$/, '')
+				.trim();
+		}
+		else {
+
+			// Caso seja var(--nome) sem fallback, removemos o var()
+
+			value = value.replace(/^var\(\s*|\s*\)$/g, '');
+		}
+	}
+
+	return value;
+}
+
+function generateTokensFromBuiltCSS(): void {
+	const buildCssDir = path.resolve(__dirname, '../../build/css');
+	const webInfDir = path.resolve(__dirname, '../WEB-INF');
+
+	if (!fs.existsSync(buildCssDir)) {
+		console.error(`❌ Pasta de build não encontrada: ${buildCssDir}`);
+
+		return;
+	}
+
+	// 1. LOCALIZAÇÃO DINÂMICA DO ARQUIVO
+	// Procuramos um arquivo que: comece com 'main.', termine com '.css' e NÃO tenha '.rtl.'
+
+	const files = fs.readdirSync(buildCssDir);
+	const mainCssFile = files.find(
+		(f) =>
+			f.startsWith('main.') && f.endsWith('.css') && !f.includes('.rtl.')
+	);
+
+	if (!mainCssFile) {
+		console.error(
+			'❌ Arquivo main.(hash).css não encontrado na pasta build/css/'
+		);
+
+		return;
+	}
+
+	const builtCssPath = path.join(buildCssDir, mainCssFile);
+	console.log(`⚡ Lendo tokens de: ${mainCssFile}`);
+
+	const cssContent = fs.readFileSync(builtCssPath, 'utf8');
+	const root = scss.parse(cssContent);
+	const tokenList: TokenDefinition[] = [];
+
+	// 2. VARREDURA E LIMPEZA
+
+	root.walkDecls((decl) => {
+		if (decl.prop.startsWith('--')) {
+			const fullId = decl.prop.replace('--', '');
+
+			// Usamos a nova função de limpeza para pegar o valor final após a vírgula
+
+			const finalValue = cleanLiferayValue(decl.value);
+
+			const hierarchy = parseTokenHierarchy(fullId);
+
+			if (!tokenList.some((t) => t.fullId === fullId)) {
+				tokenList.push({
+					fullId,
+					defaultValue: finalValue,
+					category: hierarchy.category,
+					set: hierarchy.set,
+					tokenId: fullId,
+					tokenLabel: fullId,
+				});
+			}
+		}
+	});
+
+	// 3. ORGANIZAÇÃO E SALVAMENTO
+
+	const output = {frontendTokenCategories: organizeIntoGroups(tokenList)};
+
+	if (!fs.existsSync(webInfDir)) {
+		fs.mkdirSync(webInfDir);
+	}
+
+	fs.writeFileSync(
+		path.join(webInfDir, 'frontend-token-definition.json'),
+		JSON.stringify(output, null, 2),
+		'utf-8'
+	);
+
+	console.log(
+		`\x1b[32m✔ Sucesso!\x1b[0m ${tokenList.length} tokens extraídos.`
+	);
+}
+
+generateTokensFromBuiltCSS();
+
+// function generateTokens(): void {
+// 	const srcCssDir = path.resolve(__dirname, '..', 'css', 'custom_properties');
+// 	const buildDir = path.resolve(__dirname, '..', '..', 'build', 'css');
+// 	const mainScss = path.resolve(buildDir, '_exposed_variables.scss');
+
+// 	const varPairs: VarPair[] = [];
+
+// 	const findExposedVarsRegex =
+// 		/\$([a-z0-9-_]+)\s*:\s*var\s*\(\s*--([a-z0-9-_]+)/gi;
+
+// 	const files = fs.readdirSync(srcCssDir).filter(function (f) {
+// 		return f.endsWith('.scss');
+// 	});
+
+// 	files.forEach(function (file) {
+// 		const content = fs.readFileSync(path.join(srcCssDir, file), 'utf8');
+// 		let match;
+// 		while ((match = findExposedVarsRegex.exec(content)) !== null) {
+// 			const sName = match[1];
+// 			const cName = match[2];
+
+// 			const exists = varPairs.some(function (v) {
+// 				return v.sass === sName;
+// 			});
+// 			if (!exists) {
+// 				varPairs.push({sass: sName, css: cName});
+// 			}
+// 		}
+// 	});
+
+// 	// return createTemporaryRootMap(varPairs, srcCssDir);
+
+// 	let rootContent = '';
+// 	varPairs.forEach(function (pair) {
+// 		rootContent +=
+// 			'\n' +
+// 			"  @if global-variable-exists('" +
+// 			pair.sass +
+// 			"') {\n" +
+// 			'    $temp-val: $' +
+// 			pair.sass +
+// 			';\n' +
+// 			'    $type: type-of($temp-val);\n' +
+// 			"    @if $type == 'color' or $type == 'number' or $type == 'string' {\n" +
+// 			'        --' +
+// 			pair.css +
+// 			': #{$temp-val};\n' +
+// 			'    }\n' +
+// 			'  }\n';
+// 	});
+
+// 	const reflectorScss =
+// 		"@import 'clay/functions/global-functions';\n" +
+// 		"@import '" +
+// 		mainScss.replace(/\\/g, '/') +
+// 		"';\n\n" +
+// 		':root { ' +
+// 		rootContent +
+// 		' }';
+
+// 	try {
+// 		const result = sass.compileString(reflectorScss, {
+// 			loadPaths: [path.dirname(mainScss)],
+// 			syntax: 'scss',
+// 		});
+
+// 		const root = scss.parse(result.css);
+// 		const tokenList: TokenDefinition[] = [];
+
+// 		root.walkDecls(function (decl) {
+// 			if (decl.prop.indexOf('--') === 0) {
+// 				const fullId = decl.prop.replace('--', '');
+// 				const rawValue = decl.value.trim();
+
+// 				const hierarchy = parseTokenHierarchy(fullId);
+
+// 				if (
+// 					!tokenList.some(function (t) {
+// 						return t.fullId === fullId;
+// 					})
+// 				) {
+// 					tokenList.push({
+// 						fullId,
+// 						defaultValue: rawValue,
+// 						category: hierarchy.category,
+// 						set: hierarchy.set,
+// 						tokenId: hierarchy.tokenId,
+// 						tokenLabel: hierarchy.tokenLabel,
+// 					});
+// 				}
+// 			}
+// 		});
+
+// 		const output = {frontendTokenCategories: organizeIntoGroups(tokenList)};
+// 		const webInfDir = path.resolve(__dirname, '..', 'WEB-INF');
+
+// 		if (!fs.existsSync(webInfDir)) {
+// 			fs.mkdirSync(webInfDir);
+// 		}
+
+// 		fs.writeFileSync(
+// 			path.join(webInfDir, 'frontend-token-definition.json'),
+// 			JSON.stringify(output, null, 2),
+// 			'utf-8'
+// 		);
+
+// 		console.log(
+// 			'\x1b[32m:heavy_check_mark: Finished: ' +
+// 				tokenList.length +
+// 				' tokens generated.\x1b[0m'
+// 		);
+// 	}
+// 	catch (error: any) {
+// 		console.error(':x: Erro:', error.message);
+// 	}
+// }
+
+// generateTokens();
