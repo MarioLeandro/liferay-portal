@@ -1,3 +1,16 @@
 assemble {
 	dependsOn packageRunBuild
 }
+
+task generateFrontendTokenDefinition(type: Exec)
+
+generateFrontendTokenDefinition {
+	group = "build"
+    description = "Generate frontend-token-definition.json file via TS script."
+
+    commandLine 'npm', 'run', 'generate:frontendToken'
+}
+
+packageRunBuild {
+	dependsOn generateFrontendTokenDefinition
+}
