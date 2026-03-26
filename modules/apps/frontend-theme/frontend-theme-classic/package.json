@@ -22,7 +22,12 @@
 	"scripts": {
 		"build": "node-scripts build:theme",
 		"checkFormat": "node-scripts format --check",
-		"format": "node-scripts format"
+		"format": "node-scripts format",
+		"generate:frontendToken": "ts-node ./src/util/generateFrontendTokenDefinition.ts"
+	},
+	"devDependencies": {
+		"@types/node": "^20",
+		"ts-node": "^10.9.2"
 	},
 	"version": "5.0.120"
 }
