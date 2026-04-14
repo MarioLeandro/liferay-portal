@@ -42,12 +42,18 @@ public class DesignLibrarySettingsDisplayContext {
 	public Map<String, Object> getProps() throws PortalException {
 		Group group = _getGroup();
 
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)_httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
 		return HashMapBuilder.<String, Object>put(
 			"backURL", _getBackURL()
 		).put(
 			"externalReferenceCode", group.getExternalReferenceCode()
 		).put(
 			"groupId", group.getGroupId()
+		).put(
+			"portletId", themeDisplay.getPpid()
 		).build();
 	}
 
