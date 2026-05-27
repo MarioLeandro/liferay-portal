@@ -82,6 +82,37 @@ public class CompanyModelListenerTest {
 		}
 	}
 
+	@Test
+	public void testSystemDeprecationFeatureFlagIsEnabledForNewCompany()
+		throws Exception {
+
+		Company company = CompanyTestUtil.addCompany();
+
+		List<FeatureFlag> systemDeprecationFeatureFlags =
+			_featureFlagManager.getFeatureFlags(
+				CompanyConstants.SYSTEM,
+				FeatureFlagType.DEPRECATION.getPredicate());
+
+		Assert.assertFalse(systemDeprecationFeatureFlags.isEmpty());
+
+		boolean anyEnabled = false;
+
+		for (FeatureFlag systemDeprecationFeatureFlag :
+				systemDeprecationFeatureFlags) {
+
+			if (_featureFlagManager.isEnabled(
+					company.getCompanyId(),
+					systemDeprecationFeatureFlag.getKey())) {
+
+				anyEnabled = true;
+
+				break;
+			}
+		}
+
+		Assert.assertTrue(anyEnabled);
+	}
+
 	@Inject
 	private FeatureFlagManager _featureFlagManager;
 
