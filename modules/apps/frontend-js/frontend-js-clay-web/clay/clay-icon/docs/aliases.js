@@ -426,7 +426,7 @@ export const iconsData = [
 		name: 'announcement',
 	},
 	{
-		aliases: [''],
+		aliases: ['incognito', 'secret', 'private'],
 		name: 'anonymize',
 	},
 	{
@@ -569,6 +569,10 @@ export const iconsData = [
 		name: 'box-container',
 	},
 	{
+		aliases: ['segment', 'part', 'portion'],
+		name: 'box-squared',
+	},
+	{
 		aliases: ['container', 'curly brackets', 'keys', 'object', 'record'],
 		name: 'braces',
 	},
@@ -675,6 +679,65 @@ export const iconsData = [
 	{
 		aliases: ['arrows', 'reload', 'repeat', 'update'],
 		name: 'change',
+	},
+	{
+		aliases: ['area', 'filled', 'volume', 'analytics'],
+		name: 'chart-area',
+	},
+	{
+		aliases: [
+			'bar',
+			'column',
+			'vertical',
+			'stacked',
+			'layered',
+			'analytics',
+			'growth',
+		],
+		name: 'chart-bar-stacked',
+	},
+	{
+		aliases: ['bar', 'column', 'vertical', 'axis', 'baseline', 'analytics'],
+		name: 'chart-bar-x-axis',
+	},
+	{
+		aliases: ['bar', 'horizontal', 'axis', 'baseline', 'analytics'],
+		name: 'chart-bar-y-axis',
+	},
+	{
+		aliases: ['bar', 'column', 'vertical', 'analytics', 'growth'],
+		name: 'chart-bar',
+	},
+	{
+		aliases: ['ring', 'hollow', 'segment', 'distribution', 'analytics'],
+		name: 'chart-donut',
+	},
+	{
+		aliases: ['line', 'trend', 'decrease', 'fall', 'down', 'analytics'],
+		name: 'chart-line-down',
+	},
+	{
+		aliases: ['line', 'trend', 'increase', 'growth', 'up', 'analytics'],
+		name: 'chart-line-up',
+	},
+	{
+		aliases: ['line', 'trend', 'evolution', 'analytics'],
+		name: 'chart-line',
+	},
+	{
+		aliases: [
+			'slice',
+			'segment',
+			'proportion',
+			'analytics',
+			'fill',
+			'solid',
+		],
+		name: 'chart-pie-fill',
+	},
+	{
+		aliases: ['slice', 'segment', 'proportion', 'analytics'],
+		name: 'chart-pie',
 	},
 	{
 		aliases: ['chat', 'bot'],
@@ -841,7 +904,7 @@ export const iconsData = [
 		name: 'diamond',
 	},
 	{
-		aliases: ['agenda', 'book', 'library'],
+		aliases: ['agenda', 'book', 'library', 'definition'],
 		name: 'diary',
 	},
 	{
@@ -1361,7 +1424,14 @@ export const iconsData = [
 		name: 'no-bot',
 	},
 	{
-		aliases: ['channel', 'commerce', 'marketing', 'sales', 'user'],
+		aliases: [
+			'channel',
+			'commerce',
+			'marketing',
+			'sales',
+			'user',
+			'properties',
+		],
 		name: 'nodes',
 	},
 	{
@@ -1503,6 +1573,10 @@ export const iconsData = [
 	{
 		aliases: ['fix'],
 		name: 'pin',
+	},
+	{
+		aliases: ['lifecycle', 'process', 'growth'],
+		name: 'plant',
 	},
 	{
 		aliases: ['control', 'multimedia'],
@@ -1817,7 +1891,7 @@ export const iconsData = [
 		name: 'special-character',
 	},
 	{
-		aliases: [''],
+		aliases: ['performance', 'capacity', 'power', 'usage'],
 		name: 'speed',
 	},
 	{
@@ -2043,6 +2117,10 @@ export const iconsData = [
 	{
 		aliases: ['deprecated'],
 		name: 'urgent',
+	},
+	{
+		aliases: ['settings', 'management', 'personalization'],
+		name: 'user-cog',
 	},
 	{
 		aliases: ['add', 'client', 'create', 'people'],
