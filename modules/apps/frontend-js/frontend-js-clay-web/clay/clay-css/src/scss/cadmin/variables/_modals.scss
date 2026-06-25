@@ -146,7 +146,7 @@ $cadmin-modal-body: map-deep-merge(
 		padding: $cadmin-modal-inner-padding,
 		position: relative,
 
-		'.aspect-ratio': (
+		'> .aspect-ratio': (
 			margin-left: calc(#{$cadmin-modal-inner-padding} * -1),
 			margin-right: calc(#{$cadmin-modal-inner-padding} * -1),
 			top: calc(#{$cadmin-modal-inner-padding} * -1),
