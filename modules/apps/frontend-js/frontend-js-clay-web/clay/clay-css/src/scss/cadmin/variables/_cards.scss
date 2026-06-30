@@ -792,15 +792,52 @@ $cadmin-user-card: map-deep-merge(
 
 $cadmin-card-page-dense-min-column-width: 190px !default;
 $cadmin-card-page-horizontal-min-column-width: 288px !default;
+$cadmin-card-page-min-column-width: 296px !default;
 
 $cadmin-card-page: () !default;
 $cadmin-card-page: map-deep-merge(
 	(
 		container-name: c-card-page,
 		container-type: inline-size,
-		extend: '%clay-custom-grid-wrapper',
+		display: grid,
+		gap: $cadmin-grid-gutter-width,
+		grid-template-columns:
+			repeat(auto-fill, minmax($cadmin-card-page-min-column-width, 1fr)),
+		list-style: none,
+		margin-bottom: 0,
+		padding-left: 0,
 	),
 	$cadmin-card-page
+);
+
+$cadmin-card-page-dense: () !default;
+$cadmin-card-page-dense: map-deep-merge(
+	map-merge(
+		$cadmin-card-page,
+		(
+			grid-template-columns:
+				repeat(
+					auto-fill,
+					minmax($cadmin-card-page-dense-min-column-width, 1fr)
+				),
+		)
+	),
+	$cadmin-card-page-dense
+);
+
+$cadmin-card-page-horizontal: () !default;
+$cadmin-card-page-horizontal: map-deep-merge(
+	map-merge(
+		$cadmin-card-page,
+		(
+			grid-template-columns:
+				repeat(
+					auto-fill,
+					minmax($cadmin-card-page-horizontal-min-column-width, 1fr)
+				),
+		)
+	),
+	$cadmin-card-page-horizontal
 );
 
 // Card Page Item Asset
@@ -808,33 +845,7 @@ $cadmin-card-page: map-deep-merge(
 $cadmin-card-page-item-asset: () !default;
 $cadmin-card-page-item-asset: map-deep-merge(
 	(
-		flex-basis: 100%,
-		max-width: 100%,
-		padding-left: calc(#{$cadmin-grid-gutter-width} * 0.5),
-		padding-right: calc(#{$cadmin-grid-gutter-width} * 0.5),
-		'@container #{map-get($cadmin-card-page, container-name)} (min-width: #{map-get($cadmin-container-max-widths, sm)})':
-		(
-			flex-basis: 50%,
-			max-width: 50%,
-		),
-
-		'@container #{map-get($cadmin-card-page, container-name)} (min-width: #{map-get($cadmin-container-max-widths, md)})':
-		(
-			flex-basis: 33.33333%,
-			max-width: 33.33333%,
-		),
-
-		'@container #{map-get($cadmin-card-page, container-name)} (min-width: #{map-get($cadmin-container-max-widths, lg)})':
-		(
-			flex-basis: 25%,
-			max-width: 25%,
-		),
-
-		'@container #{map-get($cadmin-card-page, container-name)} (min-width: #{map-get($cadmin-container-max-widths, xl)})':
-		(
-			flex-basis: 20%,
-			max-width: 20%,
-		),
+		min-width: 0,
 	),
 	$cadmin-card-page-item-asset
 );
