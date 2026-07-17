@@ -83,6 +83,33 @@ public class DesignLibraryResourcesDisplayContext {
 		).build();
 	}
 
+	public String getConnectedSitesAPIURL(long designLibraryEntryId)
+		throws PortalException {
+
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group group = depotEntry.getGroup();
+
+		return StringBundler.concat(
+			"/o/headless-asset-library/v1.0/asset-libraries/",
+			group.getExternalReferenceCode(),
+			"/connected-sites?page=1&pageSize=10");
+	}
+
+	public Map<String, Object> getConnectedSitesSectionProps(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		return HashMapBuilder.<String, Object>put(
+			"connectedSitesAPIURL",
+			getConnectedSitesAPIURL(designLibraryEntryId)
+		).put(
+			"externalReferenceCode",
+			_getExternalReferenceCode(designLibraryEntryId)
+		).build();
+	}
+
 	public Map<String, Object> getEmptyState() {
 		return HashMapBuilder.<String, Object>put(
 			"description",
@@ -169,6 +196,42 @@ public class DesignLibraryResourcesDisplayContext {
 		).put(
 			"styleBookNamespace",
 			PortalUtil.getPortletNamespace(StyleBookPortletKeys.STYLE_BOOK)
+		).build();
+	}
+
+	public String getMembersAPIURL(long designLibraryEntryId, String type)
+		throws PortalException {
+
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group group = depotEntry.getGroup();
+
+		return StringBundler.concat(
+			"/o/headless-asset-library/v1.0/asset-libraries/",
+			group.getExternalReferenceCode(), "/", type, "?page=1&pageSize=10");
+	}
+
+	public Map<String, Object> getMembersSectionProps(long designLibraryEntryId)
+		throws PortalException {
+
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group group = depotEntry.getGroup();
+
+		return HashMapBuilder.<String, Object>put(
+			"externalReferenceCode", group.getExternalReferenceCode()
+		).put(
+			"hasAssignMembersPermission", true
+		).put(
+			"ownerId", String.valueOf(group.getCreatorUserId())
+		).put(
+			"userAccountsAPIURL",
+			getMembersAPIURL(designLibraryEntryId, "user-accounts")
+		).put(
+			"userGroupsAPIURL",
+			getMembersAPIURL(designLibraryEntryId, "user-groups")
 		).build();
 	}
 
@@ -314,6 +377,17 @@ public class DesignLibraryResourcesDisplayContext {
 		).setBackURL(
 			PortalUtil.getCurrentURL(_httpServletRequest)
 		).buildString();
+	}
+
+	private String _getExternalReferenceCode(long designLibraryEntryId)
+		throws PortalException {
+
+		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+			designLibraryEntryId);
+
+		Group group = depotEntry.getGroup();
+
+		return group.getExternalReferenceCode();
 	}
 
 	private boolean _hasManageStyleBookEntriesPermission(long groupId) {

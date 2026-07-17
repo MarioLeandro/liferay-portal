@@ -4,6 +4,8 @@
  */
 
 export {default as DesignLibraryBreadcrumb} from './DesignLibraryBreadcrumb';
+export {default as DesignLibraryConnectedSitesSection} from './DesignLibraryConnectedSitesSection';
+export {default as DesignLibraryMembersSection} from './DesignLibraryMembersSection';
 export {default as DesignLibrarySettings} from './components/design-libraries/DesignLibrarySettings';
 export {default as DesignLibraryAdminFDSPropsTransformer} from './props_transformer/DesignLibraryAdminFDSPropsTransformer';
 export {default as DesignLibraryResourcesFDSPropsTransformer} from './props_transformer/DesignLibraryResourcesFDSPropsTransformer';
