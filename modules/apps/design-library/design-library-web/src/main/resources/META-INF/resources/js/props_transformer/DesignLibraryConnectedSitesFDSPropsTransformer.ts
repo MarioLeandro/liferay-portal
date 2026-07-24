@@ -1,0 +1,67 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import {IInternalRenderer} from '@liferay/frontend-data-set-web';
+
+import {openConnectedSitesModal} from '../actions/breadcrumbActions';
+import SiteRenderer from './cell_renderers/SiteRenderer';
+
+interface ConnectedSitesAdditionalProps {
+	externalReferenceCode?: string;
+	hasConnectSitesPermission?: boolean;
+}
+
+export default function DesignLibraryConnectedSitesFDSPropsTransformer(
+	props: Record<string, unknown>
+) {
+	const {externalReferenceCode = '', hasConnectSitesPermission = false} =
+		(props.additionalProps as ConnectedSitesAdditionalProps) ?? {};
+
+	return {
+		...props,
+		creationMenu: hasConnectSitesPermission
+			? {
+					primaryItems: [
+						{
+							label: Liferay.Language.get('connect-sites'),
+							onClick: () =>
+								openConnectedSitesModal({
+									externalReferenceCode,
+								}),
+						},
+					],
+				}
+			: undefined,
+		customRenderers: {
+			tableCell: [
+				{
+					component: SiteRenderer,
+					name: 'siteTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
+			],
+		},
+		hideManagementBarInEmptyState: true,
+		views: [
+			{
+				contentRenderer: 'table',
+				default: true,
+				label: Liferay.Language.get('sites'),
+				name: 'table',
+				schema: {
+					fields: [
+						{
+							contentRenderer: 'siteTableCellRenderer',
+							fieldName: 'descriptiveName',
+							label: Liferay.Language.get('sites'),
+							localizeLabel: true,
+						},
+					],
+				},
+				thumbnail: 'table',
+			},
+		],
+	};
+}
