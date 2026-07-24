@@ -6,6 +6,7 @@
 package com.liferay.design.library.web.internal.display.context;
 
 import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryLocalServiceUtil;
 import com.liferay.design.library.web.internal.constants.DesignLibraryConstants;
 import com.liferay.exportimport.constants.ExportImportPortletKeys;
@@ -15,6 +16,8 @@ import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemListBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,7 +32,10 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.service.UserGroupLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -66,8 +72,7 @@ public class DesignLibraryResourcesDisplayContext {
 	}
 
 	public String getAPIURL(long designLibraryEntryId) throws PortalException {
-		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
-			designLibraryEntryId);
+		DepotEntry depotEntry = _getDepotEntry(designLibraryEntryId);
 
 		return StringBundler.concat(
 			"/o/search/v1.0/search?emptySearch=true",
@@ -80,15 +85,68 @@ public class DesignLibraryResourcesDisplayContext {
 	public Map<String, Object> getBreadcrumbProps(long designLibraryEntryId)
 		throws PortalException {
 
-		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
-			designLibraryEntryId);
-
-		Group group = depotEntry.getGroup();
+		Group group = _getGroup(designLibraryEntryId);
 
 		return HashMapBuilder.<String, Object>put(
 			"actionItems", _getActionItemsJSONArray(group, designLibraryEntryId)
 		).put(
 			"breadcrumbItems", _getBreadcrumbItemsJSONArray(group)
+		).build();
+	}
+
+	public String getConnectedSitesAPIURL(long designLibraryEntryId)
+		throws PortalException {
+
+		Group group = _getGroup(designLibraryEntryId);
+
+		return StringBundler.concat(
+			"/o/headless-asset-library/v1.0/asset-libraries/",
+			group.getExternalReferenceCode(),
+			"/connected-sites?page=1&pageSize=10");
+	}
+
+	public Map<String, Object> getConnectedSitesEmptyState() {
+		return HashMapBuilder.<String, Object>put(
+			"description",
+			LanguageUtil.get(
+				_httpServletRequest, "connect-sites-to-this-design-library")
+		).put(
+			"image", "/states/resources_empty_state.svg"
+		).put(
+			"title",
+			LanguageUtil.get(_httpServletRequest, "no-sites-are-connected-yet")
+		).build();
+	}
+
+	public Map<String, Object> getConnectedSitesFDSAdditionalProps(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		return HashMapBuilder.<String, Object>put(
+			"externalReferenceCode",
+			_getGroup(
+				designLibraryEntryId
+			).getExternalReferenceCode()
+		).put(
+			"hasConnectSitesPermission",
+			_hasConnectSitesPermission(designLibraryEntryId)
+		).build();
+	}
+
+	public Map<String, Object> getConnectedSitesSectionHeaderProps(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		return HashMapBuilder.<String, Object>put(
+			"count", _getConnectedSitesCount(designLibraryEntryId)
+		).put(
+			"externalReferenceCode",
+			_getGroup(
+				designLibraryEntryId
+			).getExternalReferenceCode()
+		).put(
+			"hasConnectSitesPermission",
+			_hasConnectSitesPermission(designLibraryEntryId)
 		).build();
 	}
 
@@ -110,8 +168,7 @@ public class DesignLibraryResourcesDisplayContext {
 			long designLibraryEntryId)
 		throws PortalException {
 
-		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
-			designLibraryEntryId);
+		DepotEntry depotEntry = _getDepotEntry(designLibraryEntryId);
 
 		Group depotGroup = depotEntry.getGroup();
 
@@ -197,8 +254,7 @@ public class DesignLibraryResourcesDisplayContext {
 	public Map<String, Object> getFDSAdditionalProps(long designLibraryEntryId)
 		throws PortalException {
 
-		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
-			designLibraryEntryId);
+		DepotEntry depotEntry = _getDepotEntry(designLibraryEntryId);
 
 		Group depotGroup = depotEntry.getGroup();
 
@@ -283,11 +339,81 @@ public class DesignLibraryResourcesDisplayContext {
 		).build();
 	}
 
+	public Map<String, Object> getMembersEmptyState() {
+		return HashMapBuilder.<String, Object>put(
+			"description",
+			LanguageUtil.get(
+				_httpServletRequest, "add-members-to-this-design-library")
+		).put(
+			"image", "/states/resources_empty_state.svg"
+		).put(
+			"title", LanguageUtil.get(_httpServletRequest, "no-members-yet")
+		).build();
+	}
+
+	public Map<String, Object> getMembersFDSAdditionalProps(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		Group group = _getGroup(designLibraryEntryId);
+
+		return HashMapBuilder.<String, Object>put(
+			"externalReferenceCode", group.getExternalReferenceCode()
+		).put(
+			"hasAssignMembersPermission", _hasAssignMembersPermission(group)
+		).put(
+			"ownerId", String.valueOf(group.getCreatorUserId())
+		).build();
+	}
+
+	public Map<String, Object> getMembersSectionHeaderProps(
+			long designLibraryEntryId)
+		throws PortalException {
+
+		Group group = _getGroup(designLibraryEntryId);
+
+		return HashMapBuilder.<String, Object>put(
+			"count", _getMembersCount(group.getGroupId())
+		).put(
+			"externalReferenceCode", group.getExternalReferenceCode()
+		).put(
+			"hasAssignMembersPermission", _hasAssignMembersPermission(group)
+		).put(
+			"ownerId", String.valueOf(group.getCreatorUserId())
+		).build();
+	}
+
+	public List<TabsItem> getMembersTabsItems() {
+		return TabsItemListBuilder.add(
+			tabsItem -> {
+				tabsItem.setActive(true);
+				tabsItem.setLabel(
+					LanguageUtil.get(_httpServletRequest, "users"));
+			}
+		).add(
+			tabsItem -> tabsItem.setLabel(
+				LanguageUtil.get(_httpServletRequest, "user-groups"))
+		).build();
+	}
+
+	public String getMembersUserGroupsAPIURL(long designLibraryEntryId)
+		throws PortalException {
+
+		return _getMembersAPIURL(
+			designLibraryEntryId, "user-groups", "numberOfUserAccounts");
+	}
+
+	public String getMembersUsersAPIURL(long designLibraryEntryId)
+		throws PortalException {
+
+		return _getMembersAPIURL(
+			designLibraryEntryId, "user-accounts", "roles");
+	}
+
 	public boolean hasContentAccess(long designLibraryEntryId)
 		throws PortalException {
 
-		DepotEntry depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
-			designLibraryEntryId);
+		DepotEntry depotEntry = _getDepotEntry(designLibraryEntryId);
 
 		return _hasManageStyleBookEntriesPermission(depotEntry.getGroupId());
 	}
@@ -473,6 +599,33 @@ public class DesignLibraryResourcesDisplayContext {
 			));
 	}
 
+	private int _getConnectedSitesCount(long designLibraryEntryId)
+		throws PortalException {
+
+		DepotEntryGroupRelLocalService depotEntryGroupRelLocalService =
+			_depotEntryGroupRelLocalServiceSnapshot.get();
+
+		if (depotEntryGroupRelLocalService == null) {
+			return 0;
+		}
+
+		return depotEntryGroupRelLocalService.getDepotEntryGroupRelsCount(
+			_getDepotEntry(designLibraryEntryId));
+	}
+
+	private DepotEntry _getDepotEntry(long designLibraryEntryId)
+		throws PortalException {
+
+		if ((_depotEntry == null) ||
+			(_depotEntry.getDepotEntryId() != designLibraryEntryId)) {
+
+			_depotEntry = DepotEntryLocalServiceUtil.getDepotEntry(
+				designLibraryEntryId);
+		}
+
+		return _depotEntry;
+	}
+
 	private String _getDesignLibraryResourcesURL(long designLibraryEntryId) {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
@@ -515,6 +668,60 @@ public class DesignLibraryResourcesDisplayContext {
 			));
 	}
 
+	private Group _getGroup(long designLibraryEntryId) throws PortalException {
+		DepotEntry depotEntry = _getDepotEntry(designLibraryEntryId);
+
+		return depotEntry.getGroup();
+	}
+
+	private String _getMembersAPIURL(
+			long designLibraryEntryId, String type, String nestedFields)
+		throws PortalException {
+
+		Group group = _getGroup(designLibraryEntryId);
+
+		return StringBundler.concat(
+			"/o/headless-asset-library/v1.0/asset-libraries/",
+			group.getExternalReferenceCode(), "/", type,
+			"?page=1&pageSize=10&nestedFields=", nestedFields);
+	}
+
+	private int _getMembersCount(long groupId) {
+		UserGroupLocalService userGroupLocalService =
+			_userGroupLocalServiceSnapshot.get();
+		UserLocalService userLocalService = _userLocalServiceSnapshot.get();
+
+		if ((userGroupLocalService == null) || (userLocalService == null)) {
+			return 0;
+		}
+
+		return userLocalService.getGroupUsersCount(groupId) +
+			userGroupLocalService.getGroupUserGroupsCount(groupId);
+	}
+
+	private boolean _hasAssignMembersPermission(Group group)
+		throws PortalException {
+
+		return GroupPermissionUtil.contains(
+			_themeDisplay.getPermissionChecker(), group.getGroupId(),
+			ActionKeys.ASSIGN_MEMBERS);
+	}
+
+	private boolean _hasConnectSitesPermission(long designLibraryEntryId)
+		throws PortalException {
+
+		ModelResourcePermission<DepotEntry> modelResourcePermission =
+			_depotEntryModelResourcePermissionSnapshot.get();
+
+		if (modelResourcePermission == null) {
+			return false;
+		}
+
+		return modelResourcePermission.contains(
+			_themeDisplay.getPermissionChecker(),
+			_getDepotEntry(designLibraryEntryId), ActionKeys.UPDATE);
+	}
+
 	private boolean _hasManageFragmentEntriesPermission(long groupId) {
 		PortletResourcePermission portletResourcePermission =
 			_fragmentPortletResourcePermissionSnapshot.get();
@@ -549,6 +756,15 @@ public class DesignLibraryResourcesDisplayContext {
 			group, DepotEntry.class.getName(), group.getClassPK(), actionId);
 	}
 
+	private static final Snapshot<DepotEntryGroupRelLocalService>
+		_depotEntryGroupRelLocalServiceSnapshot = new Snapshot<>(
+			DesignLibraryResourcesDisplayContext.class,
+			DepotEntryGroupRelLocalService.class);
+	private static final Snapshot<ModelResourcePermission<DepotEntry>>
+		_depotEntryModelResourcePermissionSnapshot = new Snapshot<>(
+			DesignLibraryResourcesDisplayContext.class,
+			Snapshot.cast(ModelResourcePermission.class),
+			"(model.class.name=com.liferay.depot.model.DepotEntry)");
 	private static final Snapshot<FragmentCollectionLocalService>
 		_fragmentCollectionLocalServiceSnapshot = new Snapshot<>(
 			DesignLibraryResourcesDisplayContext.class,
@@ -563,7 +779,15 @@ public class DesignLibraryResourcesDisplayContext {
 			DesignLibraryResourcesDisplayContext.class,
 			PortletResourcePermission.class,
 			"(resource.name=" + StyleBookConstants.RESOURCE_NAME + ")");
+	private static final Snapshot<UserGroupLocalService>
+		_userGroupLocalServiceSnapshot = new Snapshot<>(
+			DesignLibraryResourcesDisplayContext.class,
+			UserGroupLocalService.class);
+	private static final Snapshot<UserLocalService> _userLocalServiceSnapshot =
+		new Snapshot<>(
+			DesignLibraryResourcesDisplayContext.class, UserLocalService.class);
 
+	private DepotEntry _depotEntry;
 	private final HttpServletRequest _httpServletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private final ThemeDisplay _themeDisplay;
