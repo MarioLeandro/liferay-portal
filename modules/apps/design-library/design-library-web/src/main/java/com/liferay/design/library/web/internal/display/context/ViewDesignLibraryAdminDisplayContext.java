@@ -9,6 +9,7 @@ import com.liferay.depot.constants.DepotActionKeys;
 import com.liferay.depot.constants.DepotConstants;
 import com.liferay.exportimport.constants.ExportImportPortletKeys;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -55,6 +56,14 @@ public class ViewDesignLibraryAdminDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"breadcrumbItems", _getBreadcrumbItemsJSONArray()
 		).build();
+	}
+
+	public List<DropdownItem> getBulkActionDropdownItems() {
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				null, "trash", "delete",
+				LanguageUtil.get(_httpServletRequest, "delete"), null, "delete",
+				null));
 	}
 
 	public Map<String, Object> getEmptyState() {

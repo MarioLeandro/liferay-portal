@@ -23,6 +23,7 @@ ViewDesignLibraryAdminDisplayContext viewDesignLibraryAdminDisplayContext = new 
 		<frontend-data-set:headless-display
 			additionalProps="<%= viewDesignLibraryAdminDisplayContext.getFDSAdditionalProps() %>"
 			apiURL="<%= viewDesignLibraryAdminDisplayContext.getAPIURL() %>"
+			bulkActionDropdownItems="<%= viewDesignLibraryAdminDisplayContext.getBulkActionDropdownItems() %>"
 			emptyState="<%= viewDesignLibraryAdminDisplayContext.getEmptyState() %>"
 			fdsActionDropdownItems="<%= viewDesignLibraryAdminDisplayContext.getFDSActionDropdownItems() %>"
 			formName="fm"
