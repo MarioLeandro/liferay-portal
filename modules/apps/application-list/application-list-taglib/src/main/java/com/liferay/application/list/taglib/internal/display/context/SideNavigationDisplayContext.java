@@ -6,6 +6,7 @@
 package com.liferay.application.list.taglib.internal.display.context;
 
 import com.liferay.application.list.PanelApp;
+import com.liferay.application.list.PanelAppNavigationItem;
 import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
@@ -127,6 +128,35 @@ public class SideNavigationDisplayContext {
 		return state.equals("visible");
 	}
 
+	private List<Map<String, Object>> _getChildPropsItems(PanelApp panelApp)
+		throws Exception {
+
+		List<Map<String, Object>> childrenPropsItems = new ArrayList<>();
+
+		List<PanelAppNavigationItem> panelAppNavigationItems =
+			panelApp.getPanelAppNavigationItems(_httpServletRequest);
+
+		for (int i = 0; i < panelAppNavigationItems.size(); i++) {
+			PanelAppNavigationItem panelAppNavigationItem =
+				panelAppNavigationItems.get(i);
+
+			childrenPropsItems.add(
+				HashMapBuilder.<String, Object>put(
+					"canonicalName", panelAppNavigationItem.getCanonicalName()
+				).put(
+					"filterOnly", true
+				).put(
+					"href", panelAppNavigationItem.getHref()
+				).put(
+					"id", panelApp.getPortletId() + StringPool.UNDERLINE + i
+				).put(
+					"label", panelAppNavigationItem.getLabel()
+				).build());
+		}
+
+		return childrenPropsItems;
+	}
+
 	private String _getColorScheme() {
 		return SessionClicks.get(
 			_httpServletRequest, _COLOR_SCHEME_SESSION_KEY, "light");
@@ -215,6 +245,18 @@ public class SideNavigationDisplayContext {
 					).toString()
 				).put(
 					"id", panelApp.getPortletId()
+				).put(
+					"items",
+					() -> {
+						List<Map<String, Object>> childrenPropsItems =
+							_getChildPropsItems(panelApp);
+
+						if (childrenPropsItems.isEmpty()) {
+							return null;
+						}
+
+						return childrenPropsItems;
+					}
 				).put(
 					"label", panelApp.getLabel(_themeDisplay.getLocale())
 				).put(

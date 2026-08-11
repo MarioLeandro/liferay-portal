@@ -114,10 +114,23 @@ function SideNavigation({
 		[updateVisible]
 	);
 
-	const numberOfResults = useMemo(
-		() => items.reduce((acc, item) => acc + (item.items?.length || 0), 0),
-		[items]
-	);
+	const numberOfResults = useMemo(() => {
+		function countNavigableItems(
+			navigationItems: Array<SideNavigationItem>
+		): number {
+			return navigationItems.reduce(
+				(count, navigationItem) =>
+					count +
+					(navigationItem.href ? 1 : 0) +
+					(navigationItem.items
+						? countNavigableItems(navigationItem.items)
+						: 0),
+				0
+			);
+		}
+
+		return countNavigableItems(items);
+	}, [items]);
 
 	return (
 		<SidePanel

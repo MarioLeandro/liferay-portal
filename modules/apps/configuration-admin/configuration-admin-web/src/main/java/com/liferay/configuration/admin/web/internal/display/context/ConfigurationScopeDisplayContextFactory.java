@@ -23,19 +23,21 @@ public class ConfigurationScopeDisplayContextFactory {
 	public static ConfigurationScopeDisplayContext create(
 		PortletRequest portletRequest) {
 
+		return create(
+			PortalUtil.getPortletId(portletRequest),
+			(ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY));
+	}
+
+	public static ConfigurationScopeDisplayContext create(
+		String portletId, ThemeDisplay themeDisplay) {
+
 		ExtendedObjectClassDefinition.Scope scope =
 			ExtendedObjectClassDefinition.Scope.SYSTEM;
 
 		Serializable scopePK = null;
 
-		String portletId = PortalUtil.getPortletId(portletRequest);
-
 		if (portletId.equals(ConfigurationAdminPortletKeys.INSTANCE_SETTINGS)) {
 			scope = ExtendedObjectClassDefinition.Scope.COMPANY;
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
 
 			scopePK = themeDisplay.getCompanyId();
 		}
@@ -43,10 +45,6 @@ public class ConfigurationScopeDisplayContextFactory {
 					ConfigurationAdminPortletKeys.SITE_SETTINGS)) {
 
 			scope = ExtendedObjectClassDefinition.Scope.GROUP;
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)portletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
 
 			scopePK = themeDisplay.getScopeGroupId();
 		}

@@ -8,12 +8,9 @@ package com.liferay.configuration.admin.web.internal.display;
 import com.liferay.configuration.admin.web.internal.model.ConfigurationModel;
 import com.liferay.configuration.admin.web.internal.util.ResourceBundleLoaderProviderUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
 
 import jakarta.portlet.PortletURL;
-import jakarta.portlet.RenderRequest;
-import jakarta.portlet.RenderResponse;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -49,14 +46,9 @@ public class ConfigurationModelConfigurationEntry
 	}
 
 	@Override
-	public String getEditURL(
-		RenderRequest renderRequest, RenderResponse renderResponse) {
-
-		PortletURL portletURL = PortletURLBuilder.createRenderURL(
-			renderResponse
-		).setParameter(
-			"factoryPid", _configurationModel.getFactoryPid()
-		).buildPortletURL();
+	public String getEditURL(PortletURL portletURL) {
+		portletURL.setParameter(
+			"factoryPid", _configurationModel.getFactoryPid());
 
 		if (_configurationModel.isFactory()) {
 			portletURL.setParameter(

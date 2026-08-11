@@ -18,6 +18,20 @@ import jakarta.portlet.RenderResponse;
  */
 public class ConfigurationCategoryUtil {
 
+	public static String getHref(
+		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay,
+		PortletURL portletURL) {
+
+		if (!configurationCategoryMenuDisplay.isEmpty()) {
+			ConfigurationEntry configurationEntry =
+				configurationCategoryMenuDisplay.getFirstConfigurationEntry();
+
+			return configurationEntry.getEditURL(portletURL);
+		}
+
+		return portletURL.toString();
+	}
+
 	public static String getHREF(
 		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay,
 		LiferayPortletResponse liferayPortletResponse,

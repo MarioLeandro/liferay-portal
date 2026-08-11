@@ -9,8 +9,7 @@ import com.liferay.configuration.admin.display.ConfigurationScreen;
 import com.liferay.petra.lang.HashUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 
-import jakarta.portlet.RenderRequest;
-import jakarta.portlet.RenderResponse;
+import jakarta.portlet.PortletURL;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -56,11 +55,9 @@ public class ConfigurationScreenConfigurationEntry
 	}
 
 	@Override
-	public String getEditURL(
-		RenderRequest renderRequest, RenderResponse renderResponse) {
-
-		return PortletURLBuilder.createRenderURL(
-			renderResponse
+	public String getEditURL(PortletURL portletURL) {
+		return PortletURLBuilder.create(
+			portletURL
 		).setMVCRenderCommandName(
 			"/configuration_admin/view_configuration_screen"
 		).setParameter(
