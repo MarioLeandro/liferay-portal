@@ -12,62 +12,30 @@ String navigation = ParamUtil.getString(request, "navigation", "oauth-clients");
 %>
 
 <clay:navigation-bar
-	navigationItems='<%=
+	navigationItems="<%=
 		new JSPNavigationItemList(pageContext) {
 			{
-				add(
-					navigationItem -> {
-						navigationItem.setActive(navigation.equals("oauth-clients"));
+				for (OAuthClientAdminNavigationTab tab : OAuthClientAdminNavigationConstants.tabs) {
+					add(
+						navigationItem -> {
+							navigationItem.setActive(tab.isActive(navigation));
 
-						PortletURL portletURL = PortletURLBuilder.createRenderURL(
-							renderResponse
-						).setMVCRenderCommandName(
-							"/oauth_client_admin/view_oauth_client_entries"
-						).setNavigation(
-							"oauth-clients"
-						).buildPortletURL();
+							PortletURL portletURL = PortletURLBuilder.createRenderURL(
+								renderResponse
+							).setMVCRenderCommandName(
+								tab.getMVCRenderCommandName()
+							).setNavigation(
+								tab.getNavigation()
+							).buildPortletURL();
 
-						navigationItem.setHref(portletURL.toString());
+							navigationItem.setHref(portletURL.toString());
 
-						navigationItem.setLabel(LanguageUtil.get(httpServletRequest, "oauth-clients"));
-					});
-
-				add(
-					navigationItem -> {
-						navigationItem.setActive(navigation.contains("oauth-client-as-local-metadata"));
-
-						PortletURL portletURL = PortletURLBuilder.createRenderURL(
-							renderResponse
-						).setMVCRenderCommandName(
-							"/oauth_client_admin/view_oauth_client_as_local_metadata"
-						).setNavigation(
-							"oauth-client-as-local-metadata"
-						).buildPortletURL();
-
-						navigationItem.setHref(portletURL.toString());
-
-						navigationItem.setLabel(LanguageUtil.get(httpServletRequest, "oauth-client-as-local-metadata"));
-					});
-
-				add(
-					navigationItem -> {
-						navigationItem.setActive(navigation.equals("oauth-client-pr-local-metadata"));
-
-						PortletURL portletURL = PortletURLBuilder.createRenderURL(
-							renderResponse
-						).setMVCRenderCommandName(
-							"/oauth_client_admin/view_oauth_client_pr_local_metadata"
-						).setNavigation(
-							"oauth-client-pr-local-metadata"
-						).buildPortletURL();
-
-						navigationItem.setHref(portletURL.toString());
-
-						navigationItem.setLabel(LanguageUtil.get(httpServletRequest, "oauth-client-pr-local-metadata"));
-					});
+							navigationItem.setLabel(LanguageUtil.get(httpServletRequest, tab.getNavigation()));
+						});
+				}
 			}
 		}
-	%>'
+	%>"
 />
 
 <c:choose>
