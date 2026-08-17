@@ -8,7 +8,6 @@ package com.liferay.configuration.admin.web.internal.application.list;
 import com.liferay.application.list.PanelAppNavigationItem;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryMenuDisplay;
-import com.liferay.configuration.admin.web.internal.display.ConfigurationCategorySectionDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationEntry;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationScopeDisplay;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryRetriever;
@@ -17,6 +16,7 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletURL;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -131,17 +132,10 @@ public class BaseSettingsPanelAppTest {
 		ConfigurationEntry betaConfigurationEntry = _getConfigurationEntry(
 			"betaKey", "Beta", "factoryPid", "betaPidValue");
 
-		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay =
+		_configurationCategoryMenuDisplays.put(
+			"factory",
 			_getConfigurationCategoryMenuDisplay(
-				releaseConfigurationEntry, betaConfigurationEntry);
-
-		Mockito.when(
-			_configurationEntryRetriever.getConfigurationCategoryMenuDisplay(
-				Mockito.eq("factory"), Mockito.anyString(), Mockito.any(),
-				Mockito.any())
-		).thenReturn(
-			configurationCategoryMenuDisplay
-		);
+				"Factory", releaseConfigurationEntry, betaConfigurationEntry));
 
 		List<PanelAppNavigationItem> panelAppNavigationItems =
 			_testSettingsPanelApp.getPanelAppNavigationItems(
@@ -215,16 +209,10 @@ public class BaseSettingsPanelAppTest {
 	}
 
 	private ConfigurationCategoryDisplay _getConfigurationCategoryDisplay(
-		String categoryKey, String categoryLabel) {
+		String categoryLabel) {
 
 		ConfigurationCategoryDisplay configurationCategoryDisplay =
 			Mockito.mock(ConfigurationCategoryDisplay.class);
-
-		Mockito.when(
-			configurationCategoryDisplay.getCategoryKey()
-		).thenReturn(
-			categoryKey
-		);
 
 		Mockito.when(
 			configurationCategoryDisplay.getCategoryLabel(
@@ -238,10 +226,19 @@ public class BaseSettingsPanelAppTest {
 
 	private ConfigurationCategoryMenuDisplay
 		_getConfigurationCategoryMenuDisplay(
-			ConfigurationEntry... configurationEntries) {
+			String categoryLabel, ConfigurationEntry... configurationEntries) {
 
 		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay =
 			Mockito.mock(ConfigurationCategoryMenuDisplay.class);
+
+		ConfigurationCategoryDisplay configurationCategoryDisplay =
+			_getConfigurationCategoryDisplay(categoryLabel);
+
+		Mockito.when(
+			configurationCategoryMenuDisplay.getConfigurationCategoryDisplay()
+		).thenReturn(
+			configurationCategoryDisplay
+		);
 
 		ConfigurationScopeDisplay configurationScopeDisplay = Mockito.mock(
 			ConfigurationScopeDisplay.class);
@@ -299,66 +296,34 @@ public class BaseSettingsPanelAppTest {
 	}
 
 	private void _setUpConfigurationEntryRetriever() {
-		ConfigurationCategoryDisplay factoryConfigurationCategoryDisplay =
-			_getConfigurationCategoryDisplay("factory", "Factory");
-		ConfigurationCategoryDisplay screenConfigurationCategoryDisplay =
-			_getConfigurationCategoryDisplay("screen", "Screen");
-
-		ConfigurationCategorySectionDisplay
-			configurationCategorySectionDisplay = Mockito.mock(
-				ConfigurationCategorySectionDisplay.class);
-
-		Mockito.when(
-			configurationCategorySectionDisplay.
-				getConfigurationCategoryDisplays()
-		).thenReturn(
-			Arrays.asList(
-				factoryConfigurationCategoryDisplay,
-				screenConfigurationCategoryDisplay)
-		);
-
-		List<ConfigurationCategorySectionDisplay>
-			configurationCategorySectionDisplays = Arrays.asList(
-				configurationCategorySectionDisplay);
-
-		Mockito.when(
-			_configurationEntryRetriever.
-				getConfigurationCategorySectionDisplays(
-					Mockito.any(), Mockito.any())
-		).thenReturn(
-			configurationCategorySectionDisplays
-		);
-
 		_factoryConfigurationCategoryMenuDisplay =
 			_getConfigurationCategoryMenuDisplay(
+				"Factory",
 				_getConfigurationEntry(
 					"factoryKey", "Factory Entry", "factoryPid",
 					"factoryPidValue"));
 
-		ConfigurationCategoryMenuDisplay
-			screenConfigurationCategoryMenuDisplay =
-				_getConfigurationCategoryMenuDisplay(
-					_getConfigurationEntry(
-						"screenKey", "Screen Entry", "configurationScreenKey",
-						"screenKeyValue"));
+		_configurationCategoryMenuDisplays = LinkedHashMapBuilder.put(
+			"factory", _factoryConfigurationCategoryMenuDisplay
+		).put(
+			"screen",
+			() -> _getConfigurationCategoryMenuDisplay(
+				"Screen",
+				_getConfigurationEntry(
+					"screenKey", "Screen Entry", "configurationScreenKey",
+					"screenKeyValue"))
+		).build();
 
 		Mockito.when(
-			_configurationEntryRetriever.getConfigurationCategoryMenuDisplay(
-				Mockito.eq("factory"), Mockito.anyString(), Mockito.any(),
-				Mockito.any())
+			_configurationEntryRetriever.getConfigurationCategoryMenuDisplays(
+				Mockito.anyString(), Mockito.any(), Mockito.any())
 		).thenReturn(
-			_factoryConfigurationCategoryMenuDisplay
-		);
-
-		Mockito.when(
-			_configurationEntryRetriever.getConfigurationCategoryMenuDisplay(
-				Mockito.eq("screen"), Mockito.anyString(), Mockito.any(),
-				Mockito.any())
-		).thenReturn(
-			screenConfigurationCategoryMenuDisplay
+			_configurationCategoryMenuDisplays
 		);
 	}
 
+	private Map<String, ConfigurationCategoryMenuDisplay>
+		_configurationCategoryMenuDisplays;
 	private final ConfigurationEntryRetriever _configurationEntryRetriever =
 		Mockito.mock(ConfigurationEntryRetriever.class);
 	private ConfigurationCategoryMenuDisplay

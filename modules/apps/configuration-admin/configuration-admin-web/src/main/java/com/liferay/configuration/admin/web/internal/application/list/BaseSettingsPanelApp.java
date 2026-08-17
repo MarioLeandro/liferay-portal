@@ -9,7 +9,6 @@ import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelAppNavigationItem;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryMenuDisplay;
-import com.liferay.configuration.admin.web.internal.display.ConfigurationCategorySectionDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationEntry;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationScopeDisplay;
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContext;
@@ -26,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Reference;
 
@@ -50,45 +50,42 @@ public abstract class BaseSettingsPanelApp extends BasePanelApp {
 			ConfigurationScopeDisplayContextFactory.create(
 				getPortletId(), themeDisplay);
 
-		for (ConfigurationCategorySectionDisplay
-				configurationCategorySectionDisplay :
-					configurationEntryRetriever.
-						getConfigurationCategorySectionDisplays(
-							configurationScopeDisplayContext.getScope(),
-							configurationScopeDisplayContext.getScopePK())) {
+		// Ask for every category at once. Collecting the configuration models
+		// sweeps all the active bundles, so fetching the categories one at a
+		// time repeats that sweep per category.
 
-			for (ConfigurationCategoryDisplay configurationCategoryDisplay :
-					configurationCategorySectionDisplay.
-						getConfigurationCategoryDisplays()) {
+		Map<String, ConfigurationCategoryMenuDisplay>
+			configurationCategoryMenuDisplays =
+				configurationEntryRetriever.
+					getConfigurationCategoryMenuDisplays(
+						themeDisplay.getLanguageId(),
+						configurationScopeDisplayContext.getScope(),
+						configurationScopeDisplayContext.getScopePK());
 
-				ConfigurationCategoryMenuDisplay
-					configurationCategoryMenuDisplay =
-						configurationEntryRetriever.
-							getConfigurationCategoryMenuDisplay(
-								configurationCategoryDisplay.getCategoryKey(),
-								themeDisplay.getLanguageId(),
-								configurationScopeDisplayContext.getScope(),
-								configurationScopeDisplayContext.getScopePK());
+		for (ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay :
+				configurationCategoryMenuDisplays.values()) {
 
-				if (configurationCategoryMenuDisplay.isEmpty()) {
-					continue;
-				}
-
-				panelAppNavigationItems.add(
-					new PanelAppNavigationItem(
-						configurationCategoryDisplay.getCategoryLabel(
-							LocaleUtil.ENGLISH),
-						ConfigurationCategoryUtil.getHref(
-							configurationCategoryMenuDisplay,
-							getPortletURL(httpServletRequest)),
-						configurationCategoryDisplay.getCategoryLabel(
-							themeDisplay.getLocale())));
-
-				_addSectionPanelAppNavigationItems(
-					configurationCategoryDisplay,
-					configurationCategoryMenuDisplay, httpServletRequest,
-					panelAppNavigationItems, themeDisplay);
+			if (configurationCategoryMenuDisplay.isEmpty()) {
+				continue;
 			}
+
+			ConfigurationCategoryDisplay configurationCategoryDisplay =
+				configurationCategoryMenuDisplay.
+					getConfigurationCategoryDisplay();
+
+			panelAppNavigationItems.add(
+				new PanelAppNavigationItem(
+					configurationCategoryDisplay.getCategoryLabel(
+						LocaleUtil.ENGLISH),
+					ConfigurationCategoryUtil.getHref(
+						configurationCategoryMenuDisplay,
+						getPortletURL(httpServletRequest)),
+					configurationCategoryDisplay.getCategoryLabel(
+						themeDisplay.getLocale())));
+
+			_addSectionPanelAppNavigationItems(
+				configurationCategoryDisplay, configurationCategoryMenuDisplay,
+				httpServletRequest, panelAppNavigationItems, themeDisplay);
 		}
 
 		return panelAppNavigationItems;
