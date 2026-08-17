@@ -67,9 +67,24 @@ function SideNavigation({
 	const {expandedKeys, isFilterActive, items, setQuery} =
 		useSideNavigationFilter(externalItems);
 
+	const [filterCollapse, setFilterCollapse] = useState<{
+		expandedKeys: Set<React.Key>;
+		filterExpandedKeys: Set<React.Key>;
+	}>();
+
+	const navigationExpandedKeys =
+		filterCollapse && filterCollapse.filterExpandedKeys === expandedKeys
+			? filterCollapse.expandedKeys
+			: expandedKeys ?? userExpandedKeys;
+
 	const updateExpandedKeys = useCallback(
 		async (updatedExpandedKeys: Set<React.Key>) => {
-			if (isFilterActive) {
+			if (expandedKeys) {
+				setFilterCollapse({
+					expandedKeys: updatedExpandedKeys,
+					filterExpandedKeys: expandedKeys,
+				});
+
 				return;
 			}
 
@@ -80,7 +95,7 @@ function SideNavigation({
 
 			setUserExpandedKeys(updatedExpandedKeys);
 		},
-		[expandedKeysSessionKey, isFilterActive]
+		[expandedKeys, expandedKeysSessionKey]
 	);
 
 	const updateVisible = useCallback(
@@ -213,7 +228,7 @@ function SideNavigation({
 						active={selectedPortletId}
 						defaultExpandedKeys={initialExpandedKeys}
 						displayType="primary"
-						expandedKeys={expandedKeys ?? userExpandedKeys}
+						expandedKeys={navigationExpandedKeys}
 						itemAriaCurrent={true}
 						items={items}
 						onExpandedChange={updateExpandedKeys}

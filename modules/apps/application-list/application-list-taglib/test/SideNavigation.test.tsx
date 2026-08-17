@@ -197,6 +197,37 @@ describe('SideNavigation', () => {
 		expect(screen.queryByText('Categories')).not.toBeInTheDocument();
 	});
 
+	it('clears the query with the clear button and restores the tree', async () => {
+		renderComponent();
+
+		expect(
+			screen.queryByTestId('sideNavigationClearSearchButton')
+		).not.toBeInTheDocument();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'categories'
+		);
+
+		await waitFor(() =>
+			expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
+		);
+
+		await userEvent.click(
+			screen.getByTestId('sideNavigationClearSearchButton')
+		);
+
+		await waitFor(() =>
+			expect(screen.getByText('Dashboard')).toBeInTheDocument()
+		);
+
+		expect(screen.getByTestId('sideNavigationSearchInput')).toHaveValue('');
+		expect(screen.queryByText('Categories')).not.toBeInTheDocument();
+		expect(
+			screen.queryByTestId('sideNavigationClearSearchButton')
+		).not.toBeInTheDocument();
+	});
+
 	it('names the parent of a matching item that is nested below a screen', async () => {
 		(Liferay.Language.get as jest.Mock).mockImplementation((key: string) =>
 			key === 'in-x' ? 'in {0}' : key
