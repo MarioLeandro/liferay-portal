@@ -88,6 +88,16 @@ const renderComponent = ({expandedKeys = ['content', 'workflow']} = {}) =>
 	);
 
 describe('SideNavigation', () => {
+
+	// The shared Liferay mock exposes Session at its root rather than under
+	// Util, which is where the portal puts it and where the panel reads it.
+
+	beforeEach(() => {
+		(Liferay.Util as Record<string, unknown>).Session = {
+			set: jest.fn(() => Promise.resolve()),
+		};
+	});
+
 	it('renders the side navigation with canonical name', () => {
 		const {getByRole, getByTestId} = renderComponent();
 
@@ -226,6 +236,74 @@ describe('SideNavigation', () => {
 		expect(
 			screen.queryByTestId('sideNavigationClearSearchButton')
 		).not.toBeInTheDocument();
+	});
+
+	it('collapses a group while the filter is active without persisting it', async () => {
+		renderComponent();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'categories'
+		);
+
+		// Wait for the filter to reveal the match, so the click below lands
+		// while the filter is genuinely active rather than during the debounce.
+
+		await screen.findByText('Categories');
+
+		const contentItem = screen.getByText('Content');
+
+		expect(contentItem).toHaveAttribute('aria-expanded', 'true');
+
+		(Liferay.Util.Session.set as jest.Mock).mockClear();
+
+		await userEvent.click(contentItem);
+
+		await waitFor(() =>
+			expect(screen.getByText('Content')).toHaveAttribute(
+				'aria-expanded',
+				'false'
+			)
+		);
+
+		await waitFor(() =>
+			expect(screen.queryByText('Categories')).not.toBeInTheDocument()
+		);
+
+		expect(Liferay.Util.Session.set).not.toHaveBeenCalled();
+	});
+
+	it('discards a collapse made while filtering once the query changes', async () => {
+		renderComponent();
+
+		const searchInput = screen.getByTestId('sideNavigationSearchInput');
+
+		await userEvent.type(searchInput, 'categories');
+
+		await screen.findByText('Categories');
+
+		await userEvent.click(screen.getByText('Content'));
+
+		await waitFor(() =>
+			expect(screen.getByText('Content')).toHaveAttribute(
+				'aria-expanded',
+				'false'
+			)
+		);
+
+		// The collapse belongs to the results it was made against, so the next
+		// query starts over from what the filter reveals.
+
+		await userEvent.clear(searchInput);
+
+		await userEvent.type(searchInput, 'vocabularies');
+
+		await screen.findByText('Vocabularies');
+
+		expect(screen.getByText('Content')).toHaveAttribute(
+			'aria-expanded',
+			'true'
+		);
 	});
 
 	it('names the parent of a matching item that is nested below a screen', async () => {
