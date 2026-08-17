@@ -225,3 +225,72 @@ describe('Filter-only items filtering', () => {
 		expect(result.items[1].items).toBeUndefined();
 	});
 });
+
+describe('Section items filtering', () => {
+	const sectionItems = [
+		{
+			id: 'configuration',
+			items: [
+				{
+					href: 'systemSettingsHref',
+					id: 'systemSettings',
+					items: [
+						{
+							filterOnly: true,
+							href: 'featureFlagsHref',
+							id: 'featureFlags',
+							label: 'Feature Flags',
+						},
+						{
+							filterOnly: true,
+							href: 'releaseHref',
+							id: 'release',
+							label: 'Release',
+							parentLabel: 'Feature Flags',
+						},
+						{
+							filterOnly: true,
+							href: 'betaHref',
+							id: 'beta',
+							label: 'Beta',
+							parentLabel: 'Feature Flags',
+						},
+					],
+					label: 'System Settings',
+				},
+			],
+			label: 'Configuration',
+		},
+	];
+
+	it('shows a matching section with its own parent as context', () => {
+		const result = filterItemsByQuery(sectionItems, 'beta');
+
+		expect(result.items).toHaveLength(1);
+		expect(result.items[0].items).toHaveLength(1);
+		expect(result.items[0].items![0].id).toBe('systemSettings');
+
+		const items = result.items[0].items![0].items;
+
+		expect(items).toHaveLength(1);
+		expect(items![0].label).toBe('Beta');
+		expect(items![0].parentLabel).toBe('Feature Flags');
+		expect(result.expandedKeys?.has('systemSettings')).toBe(true);
+	});
+
+	it('leaves the sections hidden when only their own parent matches', () => {
+		const result = filterItemsByQuery(sectionItems, 'feature flags');
+
+		const items = result.items[0].items![0].items;
+
+		expect(items).toHaveLength(1);
+		expect(items![0].label).toBe('Feature Flags');
+		expect(items![0].parentLabel).toBeUndefined();
+	});
+
+	it('hides the sections when the query is empty', () => {
+		const result = filterItemsByQuery(sectionItems, '');
+
+		expect(result.items[0].items![0].items).toBeUndefined();
+	});
+});

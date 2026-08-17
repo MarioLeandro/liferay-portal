@@ -16,7 +16,7 @@
 	}
 
 	a.nav-link + .nav .nav-link {
-		padding-left: calc(#{$nav-link-padding-x} + 1.5rem);
+		padding-left: 2rem;
 	}
 
 	input:not(:focus-within) {
@@ -61,6 +61,26 @@
 				transform: translateX(-100%);
 			}
 		}
+	}
+
+	// A section sits one level below the screens, deep enough that its own
+	// parent is not listed beside it. The parent's name reads as context under
+	// the label instead, which keeps the row at the 40px the design specifies.
+
+	.side-navigation-section-item > .nav-link {
+		align-items: flex-start;
+		display: flex;
+		flex-direction: column;
+		line-height: 1rem;
+		padding-bottom: 4px;
+		padding-top: 4px;
+	}
+
+	.side-navigation-section-item-context {
+		color: $secondary;
+		font-size: 0.75rem;
+		line-height: 0.75rem;
+		margin-top: 4px;
 	}
 }
 

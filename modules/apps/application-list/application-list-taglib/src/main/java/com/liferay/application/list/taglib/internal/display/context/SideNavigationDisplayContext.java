@@ -151,6 +151,8 @@ public class SideNavigationDisplayContext {
 					"id", panelApp.getPortletId() + StringPool.UNDERLINE + i
 				).put(
 					"label", panelAppNavigationItem.getLabel()
+				).put(
+					"parentLabel", panelAppNavigationItem::getParentLabel
 				).build());
 		}
 

@@ -31,6 +31,14 @@ const ITEMS = [
 						id: 'categories',
 						label: 'Categories',
 					},
+					{
+						canonicalName: 'vocabulariesCanonicalName',
+						filterOnly: true,
+						href: 'vocabulariesHref',
+						id: 'vocabularies',
+						label: 'Vocabularies',
+						parentLabel: 'Categories',
+					},
 				],
 				label: 'Assets',
 				leadingIcon: 'assetsIcon',
@@ -186,6 +194,25 @@ describe('SideNavigation', () => {
 		);
 
 		expect(screen.getByText('Assets')).toBeInTheDocument();
+		expect(screen.queryByText('Categories')).not.toBeInTheDocument();
+	});
+
+	it('names the parent of a matching item that is nested below a screen', async () => {
+		(Liferay.Language.get as jest.Mock).mockImplementation((key: string) =>
+			key === 'in-x' ? 'in {0}' : key
+		);
+
+		renderComponent();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'vocabularies'
+		);
+
+		const vocabulariesItem = await screen.findByText('Vocabularies');
+
+		expect(vocabulariesItem).toHaveAttribute('href', 'vocabulariesHref');
+		expect(screen.getByText('in Categories')).toBeInTheDocument();
 		expect(screen.queryByText('Categories')).not.toBeInTheDocument();
 	});
 });

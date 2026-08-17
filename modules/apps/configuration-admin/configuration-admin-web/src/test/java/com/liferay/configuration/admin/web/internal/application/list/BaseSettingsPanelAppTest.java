@@ -10,6 +10,7 @@ import com.liferay.configuration.admin.web.internal.display.ConfigurationCategor
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryMenuDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategorySectionDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationEntry;
+import com.liferay.configuration.admin.web.internal.display.ConfigurationScopeDisplay;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryRetriever;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -122,6 +123,79 @@ public class BaseSettingsPanelAppTest {
 	}
 
 	@Test
+	public void testGetPanelAppNavigationItemsIncludesSections()
+		throws Exception {
+
+		ConfigurationEntry releaseConfigurationEntry = _getConfigurationEntry(
+			"releaseKey", "Release", "factoryPid", "releasePidValue");
+		ConfigurationEntry betaConfigurationEntry = _getConfigurationEntry(
+			"betaKey", "Beta", "factoryPid", "betaPidValue");
+
+		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay =
+			_getConfigurationCategoryMenuDisplay(
+				releaseConfigurationEntry, betaConfigurationEntry);
+
+		Mockito.when(
+			_configurationEntryRetriever.getConfigurationCategoryMenuDisplay(
+				Mockito.eq("factory"), Mockito.anyString(), Mockito.any(),
+				Mockito.any())
+		).thenReturn(
+			configurationCategoryMenuDisplay
+		);
+
+		List<PanelAppNavigationItem> panelAppNavigationItems =
+			_testSettingsPanelApp.getPanelAppNavigationItems(
+				_httpServletRequest);
+
+		Assert.assertEquals(
+			panelAppNavigationItems.toString(), 4,
+			panelAppNavigationItems.size());
+
+		PanelAppNavigationItem panelAppNavigationItem =
+			panelAppNavigationItems.get(0);
+
+		Assert.assertEquals("Factory", panelAppNavigationItem.getLabel());
+		Assert.assertNull(panelAppNavigationItem.getParentLabel());
+
+		panelAppNavigationItem = panelAppNavigationItems.get(1);
+
+		Assert.assertEquals("Release", panelAppNavigationItem.getLabel());
+		Assert.assertEquals("Factory", panelAppNavigationItem.getParentLabel());
+
+		String href = panelAppNavigationItem.getHref();
+
+		Assert.assertTrue(href, href.contains("factoryPid=releasePidValue"));
+
+		panelAppNavigationItem = panelAppNavigationItems.get(2);
+
+		Assert.assertEquals(
+			"betaKey", panelAppNavigationItem.getCanonicalName());
+		Assert.assertEquals("Beta", panelAppNavigationItem.getLabel());
+		Assert.assertEquals("Factory", panelAppNavigationItem.getParentLabel());
+
+		panelAppNavigationItem = panelAppNavigationItems.get(3);
+
+		Assert.assertEquals("Screen", panelAppNavigationItem.getLabel());
+	}
+
+	@Test
+	public void testGetPanelAppNavigationItemsOmitsSingleEntrySections()
+		throws Exception {
+
+		List<PanelAppNavigationItem> panelAppNavigationItems =
+			_testSettingsPanelApp.getPanelAppNavigationItems(
+				_httpServletRequest);
+
+		for (PanelAppNavigationItem panelAppNavigationItem :
+				panelAppNavigationItems) {
+
+			Assert.assertNull(
+				panelAppNavigationItem.getLabel(),
+				panelAppNavigationItem.getParentLabel());
+		}
+	}
+
+	@Test
 	public void testGetPanelAppNavigationItemsSkipsEmptyCategories()
 		throws Exception {
 
@@ -163,10 +237,38 @@ public class BaseSettingsPanelAppTest {
 	}
 
 	private ConfigurationCategoryMenuDisplay
-		_getConfigurationCategoryMenuDisplay(String name, String value) {
+		_getConfigurationCategoryMenuDisplay(
+			ConfigurationEntry... configurationEntries) {
 
 		ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay =
 			Mockito.mock(ConfigurationCategoryMenuDisplay.class);
+
+		ConfigurationScopeDisplay configurationScopeDisplay = Mockito.mock(
+			ConfigurationScopeDisplay.class);
+
+		Mockito.when(
+			configurationScopeDisplay.getConfigurationEntries()
+		).thenReturn(
+			Arrays.asList(configurationEntries)
+		);
+
+		Mockito.when(
+			configurationCategoryMenuDisplay.getConfigurationScopeDisplays()
+		).thenReturn(
+			Arrays.asList(configurationScopeDisplay)
+		);
+
+		Mockito.when(
+			configurationCategoryMenuDisplay.getFirstConfigurationEntry()
+		).thenReturn(
+			configurationEntries[0]
+		);
+
+		return configurationCategoryMenuDisplay;
+	}
+
+	private ConfigurationEntry _getConfigurationEntry(
+		String key, String name, String parameterName, String parameterValue) {
 
 		ConfigurationEntry configurationEntry = Mockito.mock(
 			ConfigurationEntry.class);
@@ -177,17 +279,23 @@ public class BaseSettingsPanelAppTest {
 			invocationOnMock -> PortletURLBuilder.create(
 				(PortletURL)invocationOnMock.getArgument(0)
 			).setParameter(
-				name, value
+				parameterName, parameterValue
 			).buildString()
 		);
 
 		Mockito.when(
-			configurationCategoryMenuDisplay.getFirstConfigurationEntry()
+			configurationEntry.getKey()
 		).thenReturn(
-			configurationEntry
+			key
 		);
 
-		return configurationCategoryMenuDisplay;
+		Mockito.when(
+			configurationEntry.getName()
+		).thenReturn(
+			name
+		);
+
+		return configurationEntry;
 	}
 
 	private void _setUpConfigurationEntryRetriever() {
@@ -223,12 +331,16 @@ public class BaseSettingsPanelAppTest {
 
 		_factoryConfigurationCategoryMenuDisplay =
 			_getConfigurationCategoryMenuDisplay(
-				"factoryPid", "factoryPidValue");
+				_getConfigurationEntry(
+					"factoryKey", "Factory Entry", "factoryPid",
+					"factoryPidValue"));
 
 		ConfigurationCategoryMenuDisplay
 			screenConfigurationCategoryMenuDisplay =
 				_getConfigurationCategoryMenuDisplay(
-					"configurationScreenKey", "screenKeyValue");
+					_getConfigurationEntry(
+						"screenKey", "Screen Entry", "configurationScreenKey",
+						"screenKeyValue"));
 
 		Mockito.when(
 			_configurationEntryRetriever.getConfigurationCategoryMenuDisplay(

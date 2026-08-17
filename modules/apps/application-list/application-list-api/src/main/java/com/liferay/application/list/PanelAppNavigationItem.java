@@ -16,16 +16,23 @@ public class PanelAppNavigationItem {
 	public PanelAppNavigationItem(
 		String canonicalName, String href, String label) {
 
+		this(canonicalName, href, label, null);
+	}
+
+	public PanelAppNavigationItem(
+		String canonicalName, String href, String label, String parentLabel) {
+
 		_canonicalName = canonicalName;
 		_href = href;
 		_label = label;
+		_parentLabel = parentLabel;
 	}
 
 	/**
-	 * Returns the item's label in English, used to identify the item
-	 * independently of the current locale.
+	 * Returns an identifier for the item that does not depend on the current
+	 * locale, such as its label in English.
 	 *
-	 * @return the item's label in English
+	 * @return a locale independent identifier for the item
 	 */
 	public String getCanonicalName() {
 		return _canonicalName;
@@ -49,8 +56,21 @@ public class PanelAppNavigationItem {
 		return _label;
 	}
 
+	/**
+	 * Returns the label of the item's own parent in the current locale, or
+	 * <code>null</code> when the application itself is the item's parent. An
+	 * item nested below the application's screens renders this as context,
+	 * since its parent is not listed alongside it.
+	 *
+	 * @return the label of the item's parent in the current locale
+	 */
+	public String getParentLabel() {
+		return _parentLabel;
+	}
+
 	private final String _canonicalName;
 	private final String _href;
 	private final String _label;
+	private final String _parentLabel;
 
 }

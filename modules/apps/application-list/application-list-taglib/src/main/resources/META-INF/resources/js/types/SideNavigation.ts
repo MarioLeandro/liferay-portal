@@ -11,4 +11,5 @@ export type SideNavigationItem = {
 	items?: Array<SideNavigationItem>;
 	label: string;
 	leadingIcon?: string;
+	parentLabel?: string;
 };

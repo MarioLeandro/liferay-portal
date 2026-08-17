@@ -226,6 +226,11 @@ function SideNavigation({
 
 							return (
 								<ClayVerticalNav.Item
+									className={
+										item.parentLabel
+											? 'side-navigation-section-item'
+											: undefined
+									}
 									data-canonical-name={item.canonicalName}
 									href={item.href}
 									items={item.items}
@@ -241,6 +246,15 @@ function SideNavigation({
 									)}
 
 									{item.label}
+
+									{item.parentLabel && (
+										<span className="side-navigation-section-item-context">
+											{sub(
+												Liferay.Language.get('in-x'),
+												item.parentLabel
+											)}
+										</span>
+									)}
 								</ClayVerticalNav.Item>
 							);
 						}}

@@ -10,10 +10,13 @@ import com.liferay.application.list.PanelAppNavigationItem;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategoryMenuDisplay;
 import com.liferay.configuration.admin.web.internal.display.ConfigurationCategorySectionDisplay;
+import com.liferay.configuration.admin.web.internal.display.ConfigurationEntry;
+import com.liferay.configuration.admin.web.internal.display.ConfigurationScopeDisplay;
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContext;
 import com.liferay.configuration.admin.web.internal.display.context.ConfigurationScopeDisplayContextFactory;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationCategoryUtil;
 import com.liferay.configuration.admin.web.internal.util.ConfigurationEntryRetriever;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -80,6 +83,11 @@ public abstract class BaseSettingsPanelApp extends BasePanelApp {
 							getPortletURL(httpServletRequest)),
 						configurationCategoryDisplay.getCategoryLabel(
 							themeDisplay.getLocale())));
+
+				_addSectionPanelAppNavigationItems(
+					configurationCategoryDisplay,
+					configurationCategoryMenuDisplay, httpServletRequest,
+					panelAppNavigationItems, themeDisplay);
 			}
 		}
 
@@ -88,5 +96,40 @@ public abstract class BaseSettingsPanelApp extends BasePanelApp {
 
 	@Reference
 	protected ConfigurationEntryRetriever configurationEntryRetriever;
+
+	private void _addSectionPanelAppNavigationItems(
+			ConfigurationCategoryDisplay configurationCategoryDisplay,
+			ConfigurationCategoryMenuDisplay configurationCategoryMenuDisplay,
+			HttpServletRequest httpServletRequest,
+			List<PanelAppNavigationItem> panelAppNavigationItems,
+			ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		for (ConfigurationScopeDisplay configurationScopeDisplay :
+				configurationCategoryMenuDisplay.
+					getConfigurationScopeDisplays()) {
+
+			List<ConfigurationEntry> configurationEntries =
+				configurationScopeDisplay.getConfigurationEntries();
+
+			// A category holding a single entry opens straight into it, so the
+			// category's own item already leads there.
+
+			if (configurationEntries.size() < 2) {
+				continue;
+			}
+
+			panelAppNavigationItems.addAll(
+				TransformUtil.unsafeTransform(
+					configurationEntries,
+					configurationEntry -> new PanelAppNavigationItem(
+						configurationEntry.getKey(),
+						configurationEntry.getEditURL(
+							getPortletURL(httpServletRequest)),
+						configurationEntry.getName(),
+						configurationCategoryDisplay.getCategoryLabel(
+							themeDisplay.getLocale()))));
+		}
+	}
 
 }
