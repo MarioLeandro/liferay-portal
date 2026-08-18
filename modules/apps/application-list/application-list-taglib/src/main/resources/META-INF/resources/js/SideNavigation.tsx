@@ -9,14 +9,15 @@ import ClayIcon from '@clayui/icon';
 import {ClayVerticalNav} from '@clayui/nav';
 import ClaySticker from '@clayui/sticker';
 import {SearchResultsMessage} from '@liferay/layout-js-components-web';
+import {sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import {sub} from '../../../../../../../../frontend-js/frontend-js-web/src/main/resources/META-INF/resources/main';
 import SideNavigationColorSchemeButton from './SideNavigationColorSchemeButton';
 import SideNavigationSearchInput from './SideNavigationSearchInput';
 import SideNavigationSiteSelector from './SideNavigationSiteSelector';
 import {SideNavigationItem} from './types/SideNavigation';
 import {useSideNavigationFilter} from './useSideNavigationFilter';
+import {useSideNavigationItems} from './useSideNavigationItems';
 
 interface Props {
 	canonicalName: string;
@@ -27,6 +28,7 @@ interface Props {
 	expandedKeysSessionKey: string;
 	items: Array<SideNavigationItem>;
 	label: string;
+	navigationItemsURL: string;
 	selectedPortletId: string;
 	siteAdministrationItemSelectedEventName: string;
 	siteAdministrationItemSelectorUrl: string;
@@ -43,6 +45,7 @@ function SideNavigation({
 	expandedKeysSessionKey,
 	items: externalItems,
 	label,
+	navigationItemsURL,
 	selectedPortletId,
 	siteAdministrationItemSelectedEventName,
 	siteAdministrationItemSelectorUrl,
@@ -64,8 +67,15 @@ function SideNavigation({
 
 	const [visible, setVisible] = useState(initialVisible);
 
+	const {fetchNavigationItems, loading, mergedItems} = useSideNavigationItems(
+		externalItems,
+		navigationItemsURL
+	);
+
 	const {expandedKeys, isFilterActive, items, setQuery} =
-		useSideNavigationFilter(externalItems);
+		useSideNavigationFilter(mergedItems);
+
+	const resultsIncomplete = isFilterActive && loading;
 
 	const [filterCollapse, setFilterCollapse] = useState<{
 		expandedKeys: Set<React.Key>;
@@ -216,14 +226,31 @@ function SideNavigation({
 			</SidePanel.Header>
 
 			<SidePanel.Body className="c-pt-2 c-px-0">
-				<SideNavigationSearchInput onChange={setQuery} />
+				<SideNavigationSearchInput
+					onChange={setQuery}
+					onFocus={fetchNavigationItems}
+				/>
 
 				<SearchResultsMessage
-					numberOfResults={numberOfResults}
+					numberOfResults={resultsIncomplete ? null : numberOfResults}
 					resultType={Liferay.Language.get('navigation-items')}
 				/>
 
-				{numberOfResults ? (
+				{resultsIncomplete ? (
+					<div
+						aria-label={Liferay.Language.get('loading')}
+						className="side-navigation-results-skeleton"
+						role="progressbar"
+					>
+						<svg viewBox="0 120 320 530">
+							<use
+								height="650"
+								href={`${Liferay.ThemeDisplay.getPathThemeImages()}/skeletons/homes_side_navigation.svg#homes-side-navigation`}
+								width="320"
+							/>
+						</svg>
+					</div>
+				) : numberOfResults ? (
 					<ClayVerticalNav
 						active={selectedPortletId}
 						defaultExpandedKeys={initialExpandedKeys}

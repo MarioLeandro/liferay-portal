@@ -299,3 +299,49 @@ test(
 		});
 	}
 );
+
+test(
+	'The filter finds a screen inside an application',
+	{tag: '@LPD-100171'},
+	async ({globalMenuPage, page}) => {
+		const sideNavigation = page.getByLabel('Applications Menu', {
+			exact: true,
+		});
+
+		const regularRolesItem = page.getByRole('menuitem', {
+			name: 'Regular Roles',
+		});
+
+		await test.step('Go to the Control Panel', async () => {
+			await globalMenuPage.goToControlPanel();
+
+			await expect(sideNavigation).toBeVisible();
+			await expect(regularRolesItem).toBeHidden();
+		});
+
+		await test.step('Filter for a screen inside an application', async () => {
+
+			// The screens arrive from a request the filter makes on focus, so
+			// wait for it rather than for the tree the page shipped.
+
+			const navigationItemsRequest =
+				page.waitForRequest(/get_navigation_items/);
+
+			await sideNavigation.getByRole('searchbox').fill('Regular Roles');
+
+			await navigationItemsRequest;
+
+			await expect(regularRolesItem).toBeVisible();
+		});
+
+		await test.step('Follow the screen', async () => {
+			await regularRolesItem.click();
+
+			await waitForPageToBeLoaded(page);
+
+			await expect(
+				page.getByRole('heading', {name: 'Roles'})
+			).toBeAttached();
+		});
+	}
+);

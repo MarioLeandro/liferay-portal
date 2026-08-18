@@ -10,8 +10,10 @@ import React, {useEffect, useRef, useState} from 'react';
 
 function SideNavigationSearchInput({
 	onChange,
+	onFocus,
 }: {
 	onChange?: InternalDispatch<string>;
+	onFocus?: () => void;
 }) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +38,7 @@ function SideNavigationSearchInput({
 						data-qa-id="sideNavigationSearchInput"
 						insetAfter={!!query}
 						onChange={(event) => setQuery(event.target.value)}
+						onFocus={onFocus}
 						placeholder={Liferay.Language.get('search')}
 						ref={inputRef}
 						type="search"

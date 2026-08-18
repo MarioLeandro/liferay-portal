@@ -1,6 +1,25 @@
 @import 'atlas-custom-properties/_variables';
 @import 'cadmin-variables';
 
+@mixin side-navigation-shimmer {
+	overflow: hidden;
+	position: relative;
+
+	&::after {
+		animation: shimmer 1.6s infinite;
+		background: linear-gradient(
+			90deg,
+			rgb(from var(--skeleton-shimmer-color) r g b / 0) 0%,
+			rgb(from var(--skeleton-shimmer-color) r g b / 0.6) 50%,
+			rgb(from var(--skeleton-shimmer-color) r g b / 0) 100%
+		);
+		content: '';
+		inset: 0;
+		position: absolute;
+		transform: translateX(-100%);
+	}
+}
+
 .side-navigation-container {
 	--skeleton-shimmer-color: var(--light-l1);
 
@@ -44,8 +63,7 @@
 		box-shadow: none;
 
 		&.skeleton {
-			overflow: hidden;
-			position: relative;
+			@include side-navigation-shimmer;
 
 			.side-navigation-skeleton {
 				aspect-ratio: 320 / 650;
@@ -53,20 +71,21 @@
 				flex-shrink: 0;
 				width: 100%;
 			}
+		}
+	}
 
-			&::after {
-				animation: shimmer 1.6s infinite;
-				background: linear-gradient(
-					90deg,
-					rgb(from var(--skeleton-shimmer-color) r g b / 0) 0%,
-					rgb(from var(--skeleton-shimmer-color) r g b / 0.6) 50%,
-					rgb(from var(--skeleton-shimmer-color) r g b / 0) 100%
-				);
-				content: '';
-				inset: 0;
-				position: absolute;
-				transform: translateX(-100%);
-			}
+	// The screens are fetched when the filter gains focus, so a query can land
+	// before they do. Stand in for the results with the panel's own skeleton,
+	// cropped by its viewBox to the navigation below the search field.
+
+	.side-navigation-results-skeleton {
+		@include side-navigation-shimmer;
+
+		svg {
+			aspect-ratio: 320 / 530;
+			color: $secondary-l3;
+			flex-shrink: 0;
+			width: 100%;
 		}
 	}
 

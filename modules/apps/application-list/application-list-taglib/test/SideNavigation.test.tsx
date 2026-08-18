@@ -5,15 +5,37 @@
 
 import '@testing-library/jest-dom';
 import {configure} from '@testing-library/dom';
-import {render, screen, waitFor} from '@testing-library/react';
+import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {fetch} from 'frontend-js-web';
 import React from 'react';
 
 import {SideNavigation} from '../src/main/resources/META-INF/resources/js';
 
+jest.mock('frontend-js-web', () => ({
+	...(jest.requireActual('frontend-js-web') as any),
+	fetch: jest.fn(),
+}));
+
 configure({
 	testIdAttribute: 'data-qa-id',
 });
+
+const NAVIGATION_ITEMS = {
+	assets: [
+		{
+			canonicalName: 'categoriesCanonicalName',
+			href: 'categoriesHref',
+			label: 'Categories',
+		},
+		{
+			canonicalName: 'vocabulariesCanonicalName',
+			href: 'vocabulariesHref',
+			label: 'Vocabularies',
+			parentLabel: 'Categories',
+		},
+	],
+};
 
 const ITEMS = [
 	{
@@ -23,23 +45,6 @@ const ITEMS = [
 				canonicalName: 'assetsCanonicalName',
 				href: 'assetsHref',
 				id: 'assets',
-				items: [
-					{
-						canonicalName: 'categoriesCanonicalName',
-						filterOnly: true,
-						href: 'categoriesHref',
-						id: 'categories',
-						label: 'Categories',
-					},
-					{
-						canonicalName: 'vocabulariesCanonicalName',
-						filterOnly: true,
-						href: 'vocabulariesHref',
-						id: 'vocabularies',
-						label: 'Vocabularies',
-						parentLabel: 'Categories',
-					},
-				],
 				label: 'Assets',
 				leadingIcon: 'assetsIcon',
 			},
@@ -79,6 +84,7 @@ const renderComponent = ({expandedKeys = ['content', 'workflow']} = {}) =>
 			expandedKeysSessionKey="expandedKeysSessionKey"
 			items={ITEMS}
 			label="Applications"
+			navigationItemsURL="navigationItemsURL"
 			selectedPortletId="assets"
 			siteAdministrationItemSelectedEventName="siteAdministrationItemSelectedEventName"
 			siteAdministrationItemSelectorUrl="siteAdministrationItemSelectorUrl"
@@ -96,6 +102,12 @@ describe('SideNavigation', () => {
 		(Liferay.Util as Record<string, unknown>).Session = {
 			set: jest.fn(() => Promise.resolve()),
 		};
+
+		(fetch as jest.Mock).mockReset();
+		(fetch as jest.Mock).mockResolvedValue({
+			json: () => Promise.resolve({navigationItems: NAVIGATION_ITEMS}),
+			ok: true,
+		});
 	});
 
 	it('renders the side navigation with canonical name', () => {
@@ -189,6 +201,38 @@ describe('SideNavigation', () => {
 		expect(categoriesItem).toHaveAttribute('href', 'categoriesHref');
 		expect(screen.getByText('Assets')).toBeInTheDocument();
 		expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+	});
+
+	it('does not let an application expand into its screens without a query', async () => {
+		renderComponent();
+
+		// Land the screens first. Asserting before they arrive would pass even
+		// if the merge were a no-op.
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'categories'
+		);
+
+		await screen.findByText('Categories');
+
+		await userEvent.clear(screen.getByTestId('sideNavigationSearchInput'));
+
+		await waitFor(() =>
+			expect(screen.queryByText('Categories')).not.toBeInTheDocument()
+		);
+
+		// Clay only makes an item expandable when it has children, so an
+		// application whose screens are all filter-only stays a plain link.
+
+		const assetsItem = screen.getByText('Assets');
+
+		expect(assetsItem).not.toHaveAttribute('aria-expanded');
+		expect(assetsItem).toHaveAttribute('href', 'assetsHref');
+
+		await userEvent.click(assetsItem);
+
+		expect(screen.queryByText('Vocabularies')).not.toBeInTheDocument();
 	});
 
 	it('keeps the filter-only items hidden when only their parent matches', async () => {
@@ -323,5 +367,135 @@ describe('SideNavigation', () => {
 		expect(vocabulariesItem).toHaveAttribute('href', 'vocabulariesHref');
 		expect(screen.getByText('in Categories')).toBeInTheDocument();
 		expect(screen.queryByText('Categories')).not.toBeInTheDocument();
+	});
+
+	it('does not fetch the application screens before the filter is focused', () => {
+		renderComponent();
+
+		expect(fetch).not.toHaveBeenCalled();
+	});
+
+	it('fetches the application screens only once', async () => {
+		renderComponent();
+
+		const searchInput = screen.getByTestId('sideNavigationSearchInput');
+
+		fireEvent.focus(searchInput);
+		fireEvent.blur(searchInput);
+		fireEvent.focus(searchInput);
+
+		await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+		expect(fetch).toHaveBeenCalledWith('navigationItemsURL');
+	});
+
+	it('leaves the visible navigation unchanged when the screens arrive', async () => {
+		renderComponent();
+
+		// Prove the screens actually landed before asserting what did not
+		// change, otherwise the assertions pass on an unmerged tree.
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'categories'
+		);
+
+		await screen.findByText('Categories');
+
+		await userEvent.clear(screen.getByTestId('sideNavigationSearchInput'));
+
+		await waitFor(() =>
+			expect(screen.queryByText('Categories')).not.toBeInTheDocument()
+		);
+
+		expect(screen.getAllByRole('menuitem')).toHaveLength(5);
+		expect(screen.getByText('Assets')).not.toHaveAttribute('aria-expanded');
+	});
+
+	it('shows a skeleton rather than an empty state while the screens are in flight', async () => {
+		let resolveFetch!: (value: unknown) => void;
+
+		(fetch as jest.Mock).mockReturnValue(
+			new Promise((resolve) => {
+				resolveFetch = resolve;
+			})
+		);
+
+		renderComponent();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'vocabularies'
+		);
+
+		await waitFor(() =>
+			expect(screen.getByRole('progressbar')).toBeInTheDocument()
+		);
+
+		expect(screen.queryByText('no-matching-items')).not.toBeInTheDocument();
+
+		resolveFetch({
+			json: () => Promise.resolve({navigationItems: NAVIGATION_ITEMS}),
+			ok: true,
+		});
+
+		expect(await screen.findByText('Vocabularies')).toBeInTheDocument();
+		expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+	});
+
+	it('shows the empty state when the screens fail to load', async () => {
+		(fetch as jest.Mock).mockResolvedValue({
+			json: () => Promise.resolve({}),
+			ok: false,
+		});
+
+		renderComponent();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'vocabularies'
+		);
+
+		// A screen label only resolves to the empty state when the screens
+		// failed to load, so this is what distinguishes the failure branch.
+
+		expect(
+			await screen.findByText('no-matching-items')
+		).toBeInTheDocument();
+
+		expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+	});
+
+	it('keeps filtering the applications when the screens fail to load', async () => {
+		(fetch as jest.Mock).mockResolvedValue({
+			json: () => Promise.resolve({}),
+			ok: false,
+		});
+
+		renderComponent();
+
+		await userEvent.type(
+			screen.getByTestId('sideNavigationSearchInput'),
+			'assets'
+		);
+
+		expect(await screen.findByText('Assets')).toBeInTheDocument();
+	});
+
+	it('fetches the application screens again after a failure', async () => {
+		(fetch as jest.Mock).mockRejectedValue(new Error('rejected'));
+
+		renderComponent();
+
+		const searchInput = screen.getByTestId('sideNavigationSearchInput');
+
+		fireEvent.focus(searchInput);
+
+		await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+
+		fireEvent.blur(searchInput);
+		fireEvent.focus(searchInput);
+
+		await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
 	});
 });

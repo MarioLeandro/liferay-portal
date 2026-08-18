@@ -6,7 +6,6 @@
 package com.liferay.application.list.taglib.internal.display.context;
 
 import com.liferay.application.list.PanelApp;
-import com.liferay.application.list.PanelAppNavigationItem;
 import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.ApplicationListWebKeys;
@@ -16,6 +15,8 @@ import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.module.service.Snapshot;
+import com.liferay.portal.kernel.portlet.LiferayPortletURL;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -24,6 +25,8 @@ import com.liferay.portal.kernel.util.SessionClicks;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuPortletKeys;
 import com.liferay.site.item.selector.SiteItemSelectorCriterion;
+
+import jakarta.portlet.PortletRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -92,6 +95,23 @@ public class SideNavigationDisplayContext {
 		).put(
 			"label", _panelCategory.getLabel(_themeDisplay.getLocale())
 		).put(
+			"navigationItemsURL",
+			() -> {
+				LiferayPortletURL navigationItemsURL =
+					PortletURLFactoryUtil.create(
+						_httpServletRequest,
+						ProductNavigationProductMenuPortletKeys.
+							PRODUCT_NAVIGATION_PRODUCT_MENU,
+						PortletRequest.RESOURCE_PHASE);
+
+				navigationItemsURL.setResourceID(
+					"/product_navigation_product_menu/get_navigation_items");
+				navigationItemsURL.setParameter(
+					"selectedPortletId", _portletId);
+
+				return navigationItemsURL.toString();
+			}
+		).put(
 			"portletId", StringPool.BLANK
 		).put(
 			"selectedPortletId", _portletId
@@ -126,37 +146,6 @@ public class SideNavigationDisplayContext {
 			_httpServletRequest, _VISIBLE_SESSION_KEY, "visible");
 
 		return state.equals("visible");
-	}
-
-	private List<Map<String, Object>> _getChildPropsItems(PanelApp panelApp)
-		throws Exception {
-
-		List<Map<String, Object>> childrenPropsItems = new ArrayList<>();
-
-		List<PanelAppNavigationItem> panelAppNavigationItems =
-			panelApp.getPanelAppNavigationItems(_httpServletRequest);
-
-		for (int i = 0; i < panelAppNavigationItems.size(); i++) {
-			PanelAppNavigationItem panelAppNavigationItem =
-				panelAppNavigationItems.get(i);
-
-			childrenPropsItems.add(
-				HashMapBuilder.<String, Object>put(
-					"canonicalName", panelAppNavigationItem.getCanonicalName()
-				).put(
-					"filterOnly", true
-				).put(
-					"href", panelAppNavigationItem.getHref()
-				).put(
-					"id", panelApp.getPortletId() + StringPool.UNDERLINE + i
-				).put(
-					"label", panelAppNavigationItem.getLabel()
-				).put(
-					"parentLabel", panelAppNavigationItem::getParentLabel
-				).build());
-		}
-
-		return childrenPropsItems;
 	}
 
 	private String _getColorScheme() {
@@ -247,18 +236,6 @@ public class SideNavigationDisplayContext {
 					).toString()
 				).put(
 					"id", panelApp.getPortletId()
-				).put(
-					"items",
-					() -> {
-						List<Map<String, Object>> childrenPropsItems =
-							_getChildPropsItems(panelApp);
-
-						if (childrenPropsItems.isEmpty()) {
-							return null;
-						}
-
-						return childrenPropsItems;
-					}
 				).put(
 					"label", panelApp.getLabel(_themeDisplay.getLocale())
 				).put(
