@@ -5,12 +5,13 @@
 
 package com.liferay.portal.configuration.plugin.internal;
 
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.sql.Connection;
@@ -78,25 +79,20 @@ public class GroupKeyToGroupConfigurationPluginImpl
 			DataSource dataSource = _bundleContext.getService(
 				dataSourceServiceReference);
 
-			Long companyId = _getCompanyId(dataSource, webId);
+			Long companyId = CompanyIdResolver.getCompanyId(dataSource, webId);
 
-			Long[] groupIds = new Long[1];
+			Long groupId = null;
 
 			if (companyId != null) {
-				DBPartitionUtil.forEachCompanyId(
-					partitionCompanyId -> {
-						if ((partitionCompanyId != null) &&
-							!companyId.equals(partitionCompanyId)) {
+				try (SafeCloseable safeCloseable =
+						CompanyThreadLocal.setCompanyIdWithSafeCloseable(
+							companyId)) {
 
-							return;
-						}
-
-						groupIds[0] = _getGroupId(
-							companyId, dataSource, groupKey);
-					});
+					groupId = _getGroupId(companyId, dataSource, groupKey);
+				}
 			}
 
-			if (groupIds[0] == null) {
+			if (groupId == null) {
 				if (_log.isWarnEnabled()) {
 					_log.warn("Skip group key " + portableIdentifier);
 				}
@@ -104,17 +100,14 @@ public class GroupKeyToGroupConfigurationPluginImpl
 				return;
 			}
 
-			properties.put("groupId", groupIds[0]);
-
-			if (properties.get("companyId") == null) {
-				properties.put("companyId", companyId);
-			}
+			properties.put("companyId", companyId);
+			properties.put("groupId", groupId);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					StringBundler.concat(
 						"Injected company ID ", companyId, " and group ID ",
-						groupIds[0], " for group key ", groupKey));
+						groupId, " for group key ", groupKey));
 			}
 		}
 		catch (Exception exception) {
@@ -126,27 +119,6 @@ public class GroupKeyToGroupConfigurationPluginImpl
 				_log.warn("Skip group key " + portableIdentifier);
 			}
 		}
-	}
-
-	private Long _getCompanyId(DataSource dataSource, String webId)
-		throws Exception {
-
-		try (Connection connection = dataSource.getConnection();
-
-			PreparedStatement preparedStatement = connection.prepareStatement(
-				_db.buildSQL(
-					"select companyId from Company where webId = ?"))) {
-
-			preparedStatement.setString(1, webId);
-
-			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return resultSet.getLong("companyId");
-				}
-			}
-		}
-
-		return null;
 	}
 
 	private Long _getGroupId(
