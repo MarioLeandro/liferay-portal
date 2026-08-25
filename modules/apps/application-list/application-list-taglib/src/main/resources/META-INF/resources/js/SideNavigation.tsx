@@ -9,14 +9,16 @@ import ClayIcon from '@clayui/icon';
 import {ClayVerticalNav} from '@clayui/nav';
 import ClaySticker from '@clayui/sticker';
 import {SearchResultsMessage} from '@liferay/layout-js-components-web';
+import {sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import {sub} from '../../../../../../../../frontend-js/frontend-js-web/src/main/resources/META-INF/resources/main';
 import SideNavigationColorSchemeButton from './SideNavigationColorSchemeButton';
+import SideNavigationResultsSkeleton from './SideNavigationResultsSkeleton';
 import SideNavigationSearchInput from './SideNavigationSearchInput';
 import SideNavigationSiteSelector from './SideNavigationSiteSelector';
 import {SideNavigationItem} from './types/SideNavigation';
 import {useSideNavigationFilter} from './useSideNavigationFilter';
+import {useSideNavigationItems} from './useSideNavigationItems';
 
 interface Props {
 	canonicalName: string;
@@ -27,11 +29,26 @@ interface Props {
 	expandedKeysSessionKey: string;
 	items: Array<SideNavigationItem>;
 	label: string;
+	navigationItemsUrl: string;
 	selectedPortletId: string;
 	siteAdministrationItemSelectedEventName: string;
 	siteAdministrationItemSelectorUrl: string;
 	visible: boolean;
 	visibleSessionKey: string;
+}
+
+function countNavigableItems(
+	navigationItems: Array<SideNavigationItem>
+): number {
+	return navigationItems.reduce(
+		(count, navigationItem) =>
+			count +
+			(navigationItem.href ? 1 : 0) +
+			(navigationItem.items
+				? countNavigableItems(navigationItem.items)
+				: 0),
+		0
+	);
 }
 
 function SideNavigation({
@@ -43,6 +60,7 @@ function SideNavigation({
 	expandedKeysSessionKey,
 	items: externalItems,
 	label,
+	navigationItemsUrl,
 	selectedPortletId,
 	siteAdministrationItemSelectedEventName,
 	siteAdministrationItemSelectorUrl,
@@ -64,12 +82,34 @@ function SideNavigation({
 
 	const [visible, setVisible] = useState(initialVisible);
 
+	const {fetchNavigationItems, loading, mergedItems} = useSideNavigationItems(
+		externalItems,
+		navigationItemsUrl
+	);
+
 	const {expandedKeys, isFilterActive, items, setQuery} =
-		useSideNavigationFilter(externalItems);
+		useSideNavigationFilter(mergedItems);
+
+	const [filterCollapse, setFilterCollapse] = useState<{
+		expandedKeys: Set<React.Key>;
+		filterExpandedKeys: Set<React.Key>;
+	}>();
+
+	const resultsIncomplete = isFilterActive && loading;
+
+	const navigationExpandedKeys =
+		filterCollapse && filterCollapse.filterExpandedKeys === expandedKeys
+			? filterCollapse.expandedKeys
+			: expandedKeys ?? userExpandedKeys;
 
 	const updateExpandedKeys = useCallback(
 		async (updatedExpandedKeys: Set<React.Key>) => {
-			if (isFilterActive) {
+			if (isFilterActive && expandedKeys) {
+				setFilterCollapse({
+					expandedKeys: updatedExpandedKeys,
+					filterExpandedKeys: expandedKeys,
+				});
+
 				return;
 			}
 
@@ -80,7 +120,7 @@ function SideNavigation({
 
 			setUserExpandedKeys(updatedExpandedKeys);
 		},
-		[expandedKeysSessionKey, isFilterActive]
+		[expandedKeys, expandedKeysSessionKey, isFilterActive]
 	);
 
 	const updateVisible = useCallback(
@@ -114,10 +154,7 @@ function SideNavigation({
 		[updateVisible]
 	);
 
-	const numberOfResults = useMemo(
-		() => items.reduce((acc, item) => acc + (item.items?.length || 0), 0),
-		[items]
-	);
+	const numberOfResults = useMemo(() => countNavigableItems(items), [items]);
 
 	return (
 		<SidePanel
@@ -188,19 +225,24 @@ function SideNavigation({
 			</SidePanel.Header>
 
 			<SidePanel.Body className="c-pt-2 c-px-0">
-				<SideNavigationSearchInput onChange={setQuery} />
+				<SideNavigationSearchInput
+					onChange={setQuery}
+					onFocus={fetchNavigationItems}
+				/>
 
 				<SearchResultsMessage
-					numberOfResults={numberOfResults}
+					numberOfResults={resultsIncomplete ? null : numberOfResults}
 					resultType={Liferay.Language.get('navigation-items')}
 				/>
 
-				{numberOfResults ? (
+				{resultsIncomplete ? (
+					<SideNavigationResultsSkeleton />
+				) : numberOfResults ? (
 					<ClayVerticalNav
 						active={selectedPortletId}
 						defaultExpandedKeys={initialExpandedKeys}
 						displayType="primary"
-						expandedKeys={expandedKeys ?? userExpandedKeys}
+						expandedKeys={navigationExpandedKeys}
 						itemAriaCurrent={true}
 						items={items}
 						onExpandedChange={updateExpandedKeys}
@@ -213,6 +255,11 @@ function SideNavigation({
 
 							return (
 								<ClayVerticalNav.Item
+									className={
+										item.parentLabel
+											? 'side-navigation-section-item'
+											: undefined
+									}
 									data-canonical-name={item.canonicalName}
 									href={item.href}
 									items={item.items}
@@ -228,6 +275,15 @@ function SideNavigation({
 									)}
 
 									{item.label}
+
+									{item.parentLabel && (
+										<span className="side-navigation-section-item-context">
+											{sub(
+												Liferay.Language.get('in-x'),
+												item.parentLabel
+											)}
+										</span>
+									)}
 								</ClayVerticalNav.Item>
 							);
 						}}
